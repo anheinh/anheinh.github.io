@@ -981,52 +981,46 @@ function getGHToken(){return localStorage.getItem(GITHUB_TOKEN_KEY)||''}
 function setGHToken(t){localStorage.setItem(GITHUB_TOKEN_KEY,t)}
 const GH_REPO='anheinh/anheinh.github.io';
 
-async function syncToGitHub(){
-  const token=getGHToken();
-  if(!token||token.length<10){alert('请先在"修改密码"里设置 GitHub Token');return}
-  showToast('☁ 正在同步到云端...');
-  try{
-    const headers={Authorization:'Bearer '+token,'Content-Type':'application/json',Accept:'application/vnd.github+json'};
-    // 1. 上传所有本地文件到 assets/
-    for(const v of data.videos){
-      if(v.file&&videoBlobUrls[v.key]){
-        const blobUrl=videoBlobUrls[v.key];
+// ===== 云端同步：下载素材+data.json，告诉Claude "sync" 自动推送 =====
+async function syncToCloud(){
+  showToast('☁ 正在准备同步包...');
+  const downloads=[];
+  // 1. 下载所有本地文件
+  for(const v of data.videos){
+    if(v.file&&videoBlobUrls[v.key]){
+      const blobUrl=videoBlobUrls[v.key];
+      try{
         const resp=await fetch(blobUrl);const blob=await resp.blob();
-        const reader=new FileReader();
-        const base64=await new Promise(r=>{reader.onload=()=>r(reader.result.split(',')[1]);reader.readAsDataURL(blob)});
-        const path=v.file;
-        // 获取现有文件 SHA（如果存在）
-        let sha=null;
-        try{const gr=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{headers});if(gr.ok){const j=await gr.json();sha=j.sha}}catch(e){}
-        const body=JSON.stringify({message:'Upload '+path,content:base64,sha:sha,branch:'main'});
-        const putResp=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{method:'PUT',headers,body});
-        if(!putResp.ok){const e=await putResp.json();throw new Error(e.message||'Upload failed')}
-        console.log('Uploaded: '+path);
-      }
+        const fname=v.file.split('/').pop(); // 提取文件名
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+        a.download=fname;a.click();downloads.push(fname);
+        await new Promise(r=>setTimeout(r,300)); // 间隔避免浏览器拦截
+      }catch(e){console.log('Download failed: '+v.file)}
     }
-    // 2. 上传 data.json
-    const cloudData={
-      overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,
-      aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,
-      bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,
-      heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,
-      bgType:data.bgType,musicName:data.musicName,musicUrl:data.musicUrl,
-      resumeFileId:data.resumeFileId,
-      videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,file:v.file||'',embedUrl:v.embedUrl||'',mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))
-    };
-    const dj=JSON.stringify(cloudData,null,2);
-    const db64=btoa(unescape(encodeURIComponent(dj)));
-    let sha=null;
-    try{const gr=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/data.json',{headers});if(gr.ok){const j=await gr.json();sha=j.sha}}catch(e){}
-    const dbody=JSON.stringify({message:'Sync data',content:db64,sha:sha,branch:'main'});
-    const dresp=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/data.json',{method:'PUT',headers,body:dbody});
-    if(!dresp.ok){const e=await dresp.json();throw new Error(e.message||'Data sync failed')}
-    showToast('✅ 同步成功！1-2分钟后全网更新');
-  }catch(e){showToast('❌ 同步失败: '+e.message,true);console.error(e)}
+  }
+  // 2. 下载 data.json
+  const cloudData={
+    overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,
+    aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,
+    bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,
+    heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,
+    bgType:data.bgType,musicName:data.musicName,musicUrl:data.musicUrl,
+    resumeFileId:data.resumeFileId,
+    videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,file:v.file||'',embedUrl:v.embedUrl||'',mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))
+  };
+  const dj=JSON.stringify(cloudData,null,2);
+  const jblob=new Blob([dj],{type:'application/json'});
+  const ja=document.createElement('a');ja.href=URL.createObjectURL(jblob);
+  ja.download='data.json';ja.click();
+  downloads.push('data.json');
+
+  // 复制到剪贴板备用
+  try{navigator.clipboard.writeText(dj)}catch(e){}
+
+  showToast('📥 同步包已下载！把下载的文件放到 e:/portfolio/assets/ 文件夹，然后告诉我 "sync"');
 }
 
-// 云端同步按钮
-document.getElementById('btnCloudSync').onclick=()=>syncToGitHub();
+document.getElementById('btnCloudSync').onclick=()=>syncToCloud();
 
 // 导出按钮
 document.getElementById('btnExport').onclick=()=>{
