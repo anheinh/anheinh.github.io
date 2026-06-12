@@ -934,6 +934,12 @@ function renderResume(){
 
 const modal=document.getElementById('modal'),modalContent=document.getElementById('modalContent');
 function openVideoModal(v){
+  // 优先：线上托管文件（全设备可访问）
+  if(v.file&&v.file.length>0){
+    const url=v.file;
+    modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5"></video>`;
+    modal.classList.add('active');document.body.style.overflow='hidden';return;
+  }
   if(v.isLocal&&videoBlobUrls[v.key]){
     const url=videoBlobUrls[v.key];
     // 检测 HEVC 等不兼容编码
