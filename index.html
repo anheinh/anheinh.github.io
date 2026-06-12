@@ -778,8 +778,10 @@ function generateThumbnail(blobUrl,fileKey){
       if(v)v.aspectRatio=ratio;
       resolve(dataUrl);
     };
-    video.onerror=()=>resolve(null);
-    setTimeout(()=>resolve(null),5000);
+    video.onerror=()=>{console.log('Video codec unsupported');resolve(null)};
+    // HEVC/H265 无法解码时走这里
+    video.oncanplay=()=>{/* 正常 */};
+    setTimeout(()=>{if(!thumbnailCache[fileKey])resolve(null)},8000);
   });
 }
 
@@ -900,10 +902,26 @@ function renderResume(){
 
 const modal=document.getElementById('modal'),modalContent=document.getElementById('modalContent');
 function openVideoModal(v){
-  if(v.isLocal&&videoBlobUrls[v.key])modalContent.innerHTML=`<video src="${videoBlobUrls[v.key]}" controls autoplay playsinline></video>`;
-  else if(v.embedUrl)modalContent.innerHTML=`<iframe src="${v.embedUrl}" allowfullscreen allow="autoplay"></iframe>`;
+  if(v.isLocal&&videoBlobUrls[v.key]){
+    const url=videoBlobUrls[v.key];
+    // 检测 HEVC 等不兼容编码
+    const testVid=document.createElement('video');testVid.preload='metadata';testVid.muted=true;
+    testVid.src=url;
+    const showPlayer=()=>{
+      modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline></video>`;
+      modal.classList.add('active');document.body.style.overflow='hidden';
+    };
+    testVid.onloadedmetadata=()=>{
+      if(testVid.videoWidth===0||testVid.videoHeight===0){
+        // 编码不兼容：只有音频没有视频画面
+        modalContent.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--paper)"><p style="font-size:1.5rem;margin-bottom:1rem">⚠️ 视频编码不兼容</p><p style="color:var(--muted);margin-bottom:1.5rem">此视频使用 HEVC/H.265 编码，浏览器无法解码画面（仅能播放音频）</p><p style="color:var(--pop2);margin-bottom:2rem">解决方案：用剪映或格式工厂将视频重新导出为 H.264 格式</p><video src="${url}" controls playsinline style="width:100%;max-width:500px"></video></div>`;
+        modal.classList.add('active');document.body.style.overflow='hidden';
+      }else{showPlayer()}
+    };
+    testVid.onerror=()=>showPlayer(); // 无法检测时直接尝试播放
+    setTimeout(()=>{if(!modal.classList.contains('active'))showPlayer()},1500);
+  }else if(v.embedUrl){modalContent.innerHTML=`<iframe src="${v.embedUrl}" allowfullscreen allow="autoplay"></iframe>`;modal.classList.add('active');document.body.style.overflow='hidden'}
   else{alert('暂无视频');return}
-  modal.classList.add('active');document.body.style.overflow='hidden';
 }
 function closeModal(){modal.classList.remove('active');modalContent.innerHTML='';document.body.style.overflow=''}
 document.getElementById('modalClose').onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};document.onkeydown=e=>{if(e.key==='Escape')closeModal()};
@@ -984,7 +1002,7 @@ function renderVideoEditor(){
   data.videos.forEach((v,i)=>{
     const card=document.createElement('div');card.className='video-edit-card';
     const isImg=v.mediaType==='image';const info=v.isLocal?(videoBlobUrls[v.key]?(isImg?'✓ 本地图片':'✓ 本地视频'):'⚠ 丢失'):(v.embedUrl?'🌐 在线':'—');
-    card.innerHTML=`<div class="row"><div><input type="text" value="${esc(v.title)}" data-idx="${i}" data-field="title" placeholder="标题"><div class="file-info">${info}</div></div><select data-idx="${i}" data-field="category"><option ${v.category==='短视频'?'selected':''}>短视频</option><option ${v.category==='混剪'?'selected':''}>混剪</option><option ${v.category==='口播'?'selected':''}>口播</option><option ${v.category==='商业片'?'selected':''}>商业片</option><option ${v.category==='摄影'?'selected':''}>摄影</option></select><input type="text" value="${v.duration}" data-idx="${i}" data-field="duration" placeholder="时长"><button class="del-btn" data-idx="${i}">✕</button></div><div style="display:flex;gap:.5rem;margin-top:.5rem"><input type="text" value="${esc(v.embedUrl||'')}" data-idx="${i}" data-field="embedUrl" placeholder="在线链接" style="flex:1"><label class="upload-label">📁 上传<input type="file" accept="video/*,image/*" style="display:none" data-idx="${i}" class="file-input"></label></div>`;
+    card.innerHTML=`<div class="row"><div><input type="text" value="${esc(v.title)}" data-idx="${i}" data-field="title" placeholder="标题"><div class="file-info">${info}</div></div><select data-idx="${i}" data-field="category"><option ${v.category==='短视频'?'selected':''}>短视频</option><option ${v.category==='混剪'?'selected':''}>混剪</option><option ${v.category==='口播'?'selected':''}>口播</option><option ${v.category==='商业片'?'selected':''}>商业片</option><option ${v.category==='摄影'?'selected':''}>摄影</option></select><input type="text" value="${v.duration}" data-idx="${i}" data-field="duration" placeholder="时长"><button class="del-btn" data-idx="${i}">✕</button></div><div style="display:flex;gap:.5rem;margin-top:.5rem"><input type="text" value="${esc(v.embedUrl||'')}" data-idx="${i}" data-field="embedUrl" placeholder="在线链接" style="flex:1"><label class="upload-label">📁 上传<input type="file" accept="video/*,image/*" style="display:none" data-idx="${i}" class="file-input" title="推荐H.264编码MP4"></label><span style="font-size:.6rem;color:var(--dim);display:block;margin-top:.2rem">推荐 H.264 编码 · 手机拍的先用剪映导出</span></div>`;
     c.appendChild(card);
   });
   c.querySelectorAll('input[type=text],select').forEach(el=>{if(!el.classList.contains('file-input'))el.onchange=function(){data.videos[parseInt(this.dataset.idx)][this.dataset.field]=this.value}});
