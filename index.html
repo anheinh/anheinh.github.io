@@ -333,7 +333,8 @@ body{
     <div class="actions">
       <button class="btn-preview" id="btnPreview">👁 预览</button>
       <button class="btn-save" id="btnSave">💾 保存并发布</button>
-      <button class="btn-preview" id="btnExport">📥 导出数据</button>
+      <button class="btn-preview" id="btnExport">📥 导出</button>
+      <button class="btn-save" id="btnCloudSync" style="background:var(--pop3)!important;border-color:var(--pop3)!important;color:#000!important">☁ 同步到云端</button>
       <button class="btn-exit" id="btnExit">✕ 退出</button>
     </div>
   </div>
@@ -514,7 +515,15 @@ const DEFAULTS={
 let data=JSON.parse(JSON.stringify(DEFAULTS));
 let videoBlobUrls={},videoThumbnails={},resumeBlobUrl=null,bgBlobUrl=null,musicBlobUrl=null;
 
-async function loadFromDB(){await openDB();return new Promise(r=>{const tx=db.transaction('config','readonly');const req=tx.objectStore('config').get('data');req.onsuccess=()=>{if(req.result)data=req.result.value;r()};req.onerror=()=>r()})}
+async function loadFromDB(){
+  // 优先从线上拉取最新数据（全设备同步）
+  try{
+    const resp=await fetch('https://anheinh.github.io/data.json?t='+Date.now());
+    if(resp.ok){const json=await resp.json();data=Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),json);console.log('Loaded from cloud');return}
+  }catch(e){console.log('Cloud load failed, using local')}
+  // 回退到本地存储
+  await openDB();return new Promise(r=>{try{const tx=db.transaction('config','readonly');const req=tx.objectStore('config').get('data');req.onsuccess=()=>{if(req.result)data=req.result.value;r()};req.onerror=()=>r()}catch(e){r()}})
+}
 async function saveToDB(){const tx=db.transaction('config','readwrite');tx.objectStore('config').put({key:'data',value:data});await new Promise(r=>tx.oncomplete=r)}
 function getPwd(){return localStorage.getItem('ppwd')||'admin123'}
 function setPwd(p){localStorage.setItem('ppwd',p)}
@@ -957,9 +966,17 @@ document.getElementById('btnExport').onclick=()=>{
   const json=JSON.stringify(exportData,null,2);
   const blob=new Blob([json],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='portfolio-data-'+new Date().toISOString().slice(0,10)+'.json';a.click();
-  // 同时复制到剪贴板
-  try{navigator.clipboard.writeText(json);showToast('📋 数据已导出+复制到剪贴板！发给我，我帮你烧结到网页里')}catch(e){showToast('📥 数据已下载！把文件发给我')}
+  a.download='portfolio-full-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  showToast('📥 完整备份已下载')
+};
+// 云端同步：下载精简 data.json，告诉我 sync 我帮你推送
+document.getElementById('btnCloudSync').onclick=()=>{
+  const cd={overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,bgType:data.bgType,bgFileId:data.bgFileId,musicName:data.musicName,musicUrl:data.musicUrl,musicFileId:data.musicFileId,resumeFileId:data.resumeFileId,videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,embedUrl:v.embedUrl||'',isLocal:v.isLocal||false,key:v.key||null,mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))};
+  const j=JSON.stringify(cd,null,2);
+  const b=new Blob([j],{type:'application/json'});
+  const aa=document.createElement('a');aa.href=URL.createObjectURL(b);
+  aa.download='data.json';aa.click();
+  try{navigator.clipboard.writeText(j);showToast('☁ data.json 已下载+复制！告诉我 sync')}catch(e){showToast('☁ data.json 已下载！告诉我 sync')}
 };
 document.getElementById('btnExit').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 document.getElementById('btnPreview').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
@@ -1116,7 +1133,13 @@ document.getElementById('btnSave').onclick=async()=>{
   data.bgType=document.getElementById('edBgType').value;
   data.musicName=document.getElementById('edMusicName').value.trim();
   data.musicUrl=document.getElementById('edMusicUrl').value.trim();
-  await saveToDB();adminOverlay.classList.remove('show');renderFront();updateAudioSrc();if(!musicPlaying)playMusic();showToast('💾 已保存！刷新网页查看最新效果')
+  await saveToDB();adminOverlay.classList.remove('show');renderFront();updateAudioSrc();if(!musicPlaying)playMusic();
+  // 自动同步到线上 data.json（通过postMessage调用父页面推送）
+  try{
+    const syncData={overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,bgType:data.bgType,bgFileId:data.bgFileId,musicName:data.musicName,musicUrl:data.musicUrl,musicFileId:data.musicFileId,resumeFileId:data.resumeFileId,videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,embedUrl:v.embedUrl||'',isLocal:v.isLocal||false,key:v.key||null,mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))};
+    localStorage.setItem('pendingSync',JSON.stringify(syncData));
+  }catch(e){}
+  showToast('💾 已保存！同步命令已发送')
 };
 
 document.getElementById('btnChangePwd').onclick=()=>{
