@@ -466,7 +466,7 @@ body{
     <!-- 右侧实时预览 -->
     <div class="admin-preview" id="adminPreview">
       <span class="preview-label">实时预览</span>
-      <iframe id="previewFrame" src="about:blank"></iframe>
+      <div id="previewContent" style="transform:scale(.35);transform-origin:top left;width:286%;height:286%;padding:1rem"></div>
     </div>
   </div>
 </div>
@@ -530,9 +530,10 @@ function showToast(msg,isError){
   clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),2000);
 }
 
-// 实时预览：把当前修改临时应用到前台
+// 实时预览：把当前修改临时应用到前台 + 更新右侧预览面板
 function livePreview(){
   if(!adminOverlay.classList.contains('show'))return;
+  renderPreview();
   // 从输入框读取值临时应用
   const get=(id)=>document.getElementById(id)?.value||'';
   const elName=get('edName'),elSub=get('edSubtitle'),elOverline=get('edOverline');
@@ -568,13 +569,84 @@ function livePreview(){
   }
 }
 
+// 渲染预览面板
+function renderPreview(){
+  const pc=document.getElementById('previewContent');if(!pc)return;
+  const bg=data.bg||'#0D0D0D';
+  const name=getVal('edName')||data.name;
+  const sub=getVal('edSubtitle')||data.subtitle;
+  const overline=getVal('edOverline')||data.overline;
+  const skills=getVal('edSkills')||data.skills;
+  const aboutT=getVal('edAboutTitle')||data.aboutTitle;
+  const aboutTx=getVal('edAboutText')||data.aboutText;
+  const email=getVal('edEmail')||data.email;
+  const wechat=getVal('edWechat')||data.wechat;
+  const phone=getVal('edPhone')||data.phone;
+  const cols=document.getElementById('edGridCols')?.value||data.gridCols;
+  const gap=document.getElementById('edCardGap')?.value||data.cardGap||16;
+
+  const skillTags=skills.split(',').map(s=>s.trim()).filter(s=>s).map(s=>`<span style="padding:.3rem .8rem;border:1px solid #3D3A36;color:#8A8580;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase">${s}</span>`).join('');
+
+  // 作品预览卡片
+  const previewVids=data.videos.slice(0,6);
+  const vidCards=previewVids.map((v,i)=>{
+    const thumb=videoThumbnails[v.key];
+    const bgStyle=thumb?`background:url(${thumb}) center/cover`:`background:linear-gradient(135deg,#1a1a2e,#0d1117)`;
+    return `<div style="position:relative;overflow:hidden;border:1px solid #262626;min-height:120px;${thumb?'aspect-ratio:'+(v.aspectRatio||16/9):''}">
+      <div style="${bgStyle};width:100%;height:100%"></div>
+      <div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#F5F0EB;padding:1px 5px;font-size:.5rem">${v.duration}</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:.4rem;background:linear-gradient(to top,rgba(0,0,0,.6),transparent)">
+        <div style="font-size:.45rem;color:#FFB800;letter-spacing:.15em">${v.category}</div>
+        <div style="font-size:.65rem;color:#fff;font-weight:600">${v.title}</div>
+      </div></div>`;
+  }).join('');
+
+  pc.innerHTML=`
+    <div style="font-family:'Noto Sans SC',sans-serif;background:${bg};color:#F5F0EB;min-height:100%">
+      <!-- Hero -->
+      <div style="text-align:center;padding:3rem 1rem 2rem">
+        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--pop1,#FF3366);margin-bottom:1rem">${overline}</div>
+        <h1 style="font-family:'Noto Serif SC',serif;font-size:2.5rem;font-weight:900;background:linear-gradient(180deg,#F5F0EB,#8A8580);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem">${name}</h1>
+        <p style="font-size:.7rem;color:#8A8580">${sub}</p>
+        <div style="display:flex;gap:.3rem;flex-wrap:wrap;justify-content:center;margin-top:1rem">${skillTags}</div>
+      </div>
+      <!-- Works -->
+      <div style="padding:0 1.5rem 2rem">
+        <div style="text-align:center;margin-bottom:1.5rem">
+          <div style="font-size:2.5rem;font-weight:900;color:transparent;-webkit-text-stroke:1px #3D3A36;line-height:1">01</div>
+          <div style="font-size:1.2rem;font-weight:700">精选作品</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:${gap}px">${vidCards}</div>
+      </div>
+      <!-- About -->
+      <div style="padding:1.5rem;border-top:1px solid #262626;border-bottom:1px solid #262626">
+        <div style="text-align:center;margin-bottom:1rem"><div style="font-size:2rem;font-weight:900;color:transparent;-webkit-text-stroke:1px #3D3A36;line-height:1">03</div><div style="font-size:1.1rem;font-weight:700">关于我</div></div>
+        <div style="display:flex;gap:2rem;align-items:center;max-width:600px;margin:0 auto">
+          <div style="flex:1"><h3 style="font-size:1rem">${aboutT}</h3><p style="font-size:.65rem;color:#8A8580;line-height:1.8">${aboutTx}</p></div>
+          <div style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;border:1px solid #3D3A36">🎬</div>
+        </div>
+      </div>
+      <!-- Contact -->
+      <div style="text-align:center;padding:1.5rem">
+        <div style="font-size:1.5rem;font-weight:900;color:transparent;-webkit-text-stroke:1px #3D3A36;line-height:1">04</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:1rem">联系方式</div>
+        <div style="display:flex;gap:1px;justify-content:center;background:#262626">
+          <div style="flex:1;padding:.8rem;background:${bg}"><div style="font-size:.55rem;color:#3D3A36">Email</div><div style="font-size:.65rem">${email}</div></div>
+          <div style="flex:1;padding:.8rem;background:${bg}"><div style="font-size:.55rem;color:#3D3A36">WeChat</div><div style="font-size:.65rem">${wechat}</div></div>
+          <div style="flex:1;padding:.8rem;background:${bg}"><div style="font-size:.55rem;color:#3D3A36">Phone</div><div style="font-size:.65rem">${phone}</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+function getVal(id){return document.getElementById(id)?.value||''}
+
 // 色卡点击处理
 function initPalettes(){
   // 背景色卡
   document.querySelectorAll('#bgPalette .palette-dot').forEach(d=>{d.onclick=()=>{
     document.querySelectorAll('#bgPalette .palette-dot').forEach(x=>x.classList.remove('active'));
     d.classList.add('active');document.getElementById('edBg').value=d.dataset.color;
-    data.bg=d.dataset.color;document.body.style.background=data.bg;
+    data.bg=d.dataset.color;document.body.style.background=data.bg;renderPreview();
   }});
   // 强调色卡
   document.querySelectorAll('#accentPalette .palette-dot').forEach(d=>{d.onclick=()=>{
@@ -585,7 +657,7 @@ function initPalettes(){
     // 更新输入框
     const idx=parseInt(t.slice(1));
     document.getElementById('edC'+idx).value=c;
-    data[t]=c;document.documentElement.style.setProperty('--'+t,c);
+    data[t]=c;document.documentElement.style.setProperty('--'+t,c);renderPreview();
   }});
 }
 
@@ -843,7 +915,7 @@ document.getElementById('gearBtn').onclick=()=>{loginOverlay.classList.add('show
 document.getElementById('loginBtn').onclick=()=>{if(document.getElementById('loginPwd').value===getPwd()){loginOverlay.classList.remove('show');openAdmin()}else alert('密码错误')};
 document.getElementById('loginPwd').onkeydown=e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()};
 
-function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes()}
+function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes();renderPreview()}
 document.getElementById('btnExit').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 document.getElementById('btnPreview').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 
