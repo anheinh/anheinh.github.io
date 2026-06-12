@@ -313,7 +313,7 @@ body{
 
 <!-- ===== 背景音乐按钮 ===== -->
 <button class="music-btn playing" id="musicBtn" title="背景音乐">♪</button>
-<audio id="bgAudio" loop preload="auto"></audio>
+<audio id="bgAudio" loop preload="metadata"></audio>
 
 <!-- ===== 齿轮 + 登录 ===== -->
 <button class="gear-btn" id="gearBtn" title="后台">⚙</button>
@@ -522,7 +522,7 @@ let videoBlobUrls={},videoThumbnails={},resumeBlobUrl=null,bgBlobUrl=null,musicB
 async function loadFromDB(){
   // 优先从线上拉取最新数据（全设备同步）
   try{
-    const resp=await fetch('https://anheinh.github.io/data.json?t='+Date.now());
+    const resp=await fetch('https://anheinh.github.io/data.json?v=1.2&t='+Date.now());
     if(resp.ok){const json=await resp.json();data=Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),json);console.log('Loaded from cloud');return}
   }catch(e){console.log('Cloud load failed, using local')}
   // 回退到本地存储
@@ -743,7 +743,7 @@ function updateBgDisplay(){
     container.innerHTML=`<img src="${bgBlobUrl}" alt="bg">`;
     fluidActive=false;canvas.style.display='none';
   }else if(data.bgType==='video'&&bgBlobUrl){
-    container.innerHTML=`<video src="${bgBlobUrl}" autoplay muted loop playsinline webkit-playsinline></video>`;
+    container.innerHTML=`<video src="${bgBlobUrl}" poster="./assets/cover.jpg" preload="metadata" autoplay muted loop playsinline webkit-playsinline></video>`;
     fluidActive=false;canvas.style.display='none';
   }else{
     fluidActive=true;canvas.style.display='block';initFluid();
@@ -756,15 +756,18 @@ const musicBtn=document.getElementById('musicBtn');
 let musicPlaying=false;
 function updateAudioSrc(){
   if(musicBlobUrl){bgAudio.src=musicBlobUrl}
-  else if(data.musicUrl){bgAudio.src=data.musicUrl}
+  else if(data.musicUrl){bgAudio.src=data.musicUrl+'?v=1.2'}
   else{bgAudio.src=''}
 }
+function saveMusicState(){localStorage.setItem('musicPlaying',musicPlaying?'1':'0')}
+function loadMusicState(){return localStorage.getItem('musicPlaying')==='1'}
 function playMusic(){
   updateAudioSrc();if(!bgAudio.src)return;
-  bgAudio.volume=0.25;bgAudio.play().then(()=>{musicPlaying=true;musicBtn.classList.add('playing');musicBtn.textContent='♪'}).catch(()=>{/* autoplay blocked */})
+  bgAudio.volume=0.25;bgAudio.play().then(()=>{musicPlaying=true;musicBtn.classList.add('playing');musicBtn.textContent='♪';saveMusicState()}).catch(()=>{/* autoplay blocked */})
 }
 function toggleMusic(){
   if(musicPlaying){bgAudio.pause();musicPlaying=false;musicBtn.classList.remove('playing');musicBtn.textContent='♪'}else{playMusic()}
+  saveMusicState();
 }
 musicBtn.onclick=toggleMusic;
 
@@ -937,7 +940,7 @@ function openVideoModal(v){
   // 优先：线上托管文件（全设备可访问）
   if(v.file&&v.file.length>0){
     const url=v.file;
-    modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5"></video>`;
+    modalContent.innerHTML=`<video src="${url}" poster="./assets/cover.jpg" preload="metadata" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5"></video>`;
     modal.classList.add('active');document.body.style.overflow='hidden';return;
   }
   if(v.isLocal&&videoBlobUrls[v.key]){
@@ -946,13 +949,13 @@ function openVideoModal(v){
     const testVid=document.createElement('video');testVid.preload='metadata';testVid.muted=true;
     testVid.src=url;
     const showPlayer=()=>{
-      modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-orientation="portraint"></video>`;
+      modalContent.innerHTML=`<video src="${url}" poster="./assets/cover.jpg" preload="metadata" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-orientation="portraint"></video>`;
       modal.classList.add('active');document.body.style.overflow='hidden';
     };
     testVid.onloadedmetadata=()=>{
       if(testVid.videoWidth===0||testVid.videoHeight===0){
         // 编码不兼容：只有音频没有视频画面
-        modalContent.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--paper)"><p style="font-size:1.5rem;margin-bottom:1rem">⚠️ 视频编码不兼容</p><p style="color:var(--muted);margin-bottom:1.5rem">此视频使用 HEVC/H.265 编码，浏览器无法解码画面（仅能播放音频）</p><p style="color:var(--pop2);margin-bottom:2rem">解决方案：用剪映或格式工厂将视频重新导出为 H.264 格式</p><video src="${url}" controls playsinline style="width:100%;max-width:500px"></video></div>`;
+        modalContent.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--paper)"><p style="font-size:1.5rem;margin-bottom:1rem">⚠️ 视频编码不兼容</p><p style="color:var(--muted);margin-bottom:1.5rem">此视频使用 HEVC/H.265 编码，浏览器无法解码画面（仅能播放音频）</p><p style="color:var(--pop2);margin-bottom:2rem">解决方案：用剪映或格式工厂将视频重新导出为 H.264 格式</p><video src="${url}" poster="./assets/cover.jpg" preload="metadata" controls playsinline webkit-playsinline x5-video-player-type="h5" style="width:100%;max-width:500px"></video></div>`;
         modal.classList.add('active');document.body.style.overflow='hidden';
       }else{showPlayer()}
     };
@@ -1223,7 +1226,9 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
   renderFront();
   try{initFluid();animateFluid()}catch(e){}
   updateAudioSrc();
-  try{bgAudio.volume=0.2;await bgAudio.play();musicPlaying=true;musicBtn.classList.add('playing')}catch(e){/* autoplay blocked on mobile */}
+  // 尊重用户之前的音乐开关状态
+  if(loadMusicState()){try{bgAudio.volume=0.2;await bgAudio.play();musicPlaying=true;musicBtn.classList.add('playing')}catch(e){/* autoplay blocked */}}
+  else{musicPlaying=false;musicBtn.classList.remove('playing')}
 })();
 </script>
 </body>
