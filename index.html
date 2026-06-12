@@ -488,28 +488,28 @@ function saveToLS(){try{localStorage.setItem('pf_data',JSON.stringify(data))}cat
 function loadFromLS(){try{const d=localStorage.getItem('pf_data');if(d)data=JSON.parse(d)}catch(e){}}
 
 const DEFAULTS={
-  overline:'VIDEO PORTFOLIO',name:'谢时庆',
-  subtitle:'导演 · 剪辑 · 创意 — 用影像讲述品牌故事',
+  overline:'VIDEO PORTFOLIO',name:'谢时庆作品集',
+  subtitle:'五年自媒体经验-服务过超100家商户，包含编导，运营，拍摄，剪辑',
   aboutTitle:'关于我',
   aboutText:'独立视频创作者，专注于品牌短片、广告创意与内容策划。擅长通过视觉叙事为品牌注入情感与力量。曾服务多个行业头部客户，致力于用电影级的画面语言呈现商业价值。',
   skills:'导演,剪辑,调色,创意策划,品牌短片,内容运营',
-  email:'hello@xieshiqing.com',wechat:'XSQ_FILM',phone:'+86 138-xxxx-xxxx',
-  bg:'#0D0D0D',c1:'#FF3366',c2:'#FFB800',c3:'#00E5FF',c4:'#7CFF3F',c5:'#BF5AF2',
-  heroSize:'clamp(3rem,7vw,6rem)',gridCols:3,cardGap:16,
+  email:'1559840686@qq.com',wechat:'XQinghhsh',phone:'19968001943',
+  bg:'#1A1A1E',c1:'#FF3366',c2:'#FFB800',c3:'#00E5FF',c4:'#7CFF3F',c5:'#BF5AF2',
+  heroSize:'clamp(3rem,7vw,8rem)',gridCols:4,cardGap:24,
   bgType:'fluid',bgFileId:null,
-  musicName:'再飞行 — 逃跑计划',
+  musicName:'一脸无辜的西瓜 - 昨夜小楼又东风 - 江源东',
   musicUrl:'https://music.163.com/song/media/outer/url?id=28267530.mp3',
-  musicFileId:null,
+  musicFileId:'main',
   videos:[
-    {title:'品牌故事 · 匠心',category:'商业片',duration:'2:30',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
-    {title:'情绪短片 · 城市独白',category:'短视频',duration:'0:45',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
-    {title:'产品大片 · 质感',category:'混剪',duration:'1:15',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
+    {title:'品牌故事 · 匠心',category:'商业片',duration:'2:30',embedUrl:'',isLocal:true,fileId:null,mediaType:'video',key:'vid_1781273824253_duki40zkhi8',aspectRatio:0.5625},
+    {title:'情绪短片 · 城市独白',category:'短视频',duration:'0:45',embedUrl:'',isLocal:true,fileId:null,mediaType:'video',key:'vid_1781274010035_7yp1nlxnawu',aspectRatio:1.7777777777777777},
+    {title:'产品大片 · 质感',category:'混剪',duration:'1:15',embedUrl:'',isLocal:true,fileId:null,mediaType:'video',key:'vid_1781274061937_w9fjlsk9yw9',aspectRatio:0.5625},
     {title:'人物访谈 · 对话',category:'口播',duration:'3:20',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
     {title:'创意广告 · 反转',category:'商业片',duration:'1:00',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
     {title:'旅拍VLOG · 城市',category:'短视频',duration:'0:50',embedUrl:'',isLocal:false,fileId:null,mediaType:'video'},
-    {title:'街拍 · 光影',category:'摄影',duration:'',embedUrl:'',isLocal:false,fileId:null,mediaType:'image'},
+    {title:'街拍 · 光影',category:'摄影',duration:'',embedUrl:'',isLocal:true,fileId:null,mediaType:'image',key:'vid_1781273835592_dn4yieg5s0n'},
   ],
-  resumeFileId:null
+  resumeFileId:'main'
 };
 let data=JSON.parse(JSON.stringify(DEFAULTS));
 let videoBlobUrls={},videoThumbnails={},resumeBlobUrl=null,bgBlobUrl=null,musicBlobUrl=null;
