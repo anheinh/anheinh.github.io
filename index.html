@@ -85,55 +85,75 @@ body{
 /* ============ 后台 ============ */
 .admin-overlay{display:none;position:fixed;inset:0;z-index:199;background:var(--bg);flex-direction:column}
 .admin-overlay.show{display:flex}
-.admin-header{padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
-.admin-header h2{font-family:"Noto Serif SC",serif;font-size:1.1rem;font-weight:600;letter-spacing:.04em}
-.admin-header .actions{display:flex;gap:.5rem}
-.admin-header button{padding:.5rem 1.2rem;border:1px solid var(--dim);background:transparent;color:var(--paper);cursor:pointer;font-size:.8rem;font-weight:400;letter-spacing:.06em;font-family:inherit;transition:all .2s}
+.admin-header{padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;gap:1rem}
+.admin-header h2{font-family:"Noto Serif SC",serif;font-size:1rem;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.admin-header .actions{display:flex;gap:.4rem}
+.admin-header button{padding:.5rem 1rem;border:1px solid var(--dim);background:transparent;color:var(--paper);cursor:pointer;font-size:.75rem;font-weight:400;letter-spacing:.04em;font-family:inherit;transition:all .2s;border-radius:4px}
 .btn-preview:hover{border-color:var(--pop3);color:var(--pop3)}
-.btn-save:hover{border-color:var(--pop4);color:var(--pop4)}
+.btn-save{background:var(--pop1)!important;border-color:var(--pop1)!important;color:#fff!important}
+.btn-save:hover{opacity:.85}
 .btn-exit:hover{border-color:var(--muted);color:var(--muted)}
 .admin-body{display:flex;flex:1;overflow:hidden}
-.admin-tabs{width:220px;flex-shrink:0;border-right:1px solid var(--border);padding:2rem 0;overflow-y:auto}
-.admin-tab{display:block;width:100%;padding:.7rem 2rem;border:none;background:none;text-align:left;cursor:pointer;font-size:.85rem;color:var(--muted);transition:all .2s;font-family:inherit;font-weight:300;letter-spacing:.03em}
+/* 左侧设置区 */
+.admin-left{display:flex;flex:1;min-width:0;overflow:hidden}
+.admin-tabs{width:160px;flex-shrink:0;border-right:1px solid var(--border);padding:1rem 0;overflow-y:auto}
+.admin-tab{display:block;width:100%;padding:.6rem 1.2rem;border:none;background:none;text-align:left;cursor:pointer;font-size:.8rem;color:var(--muted);transition:all .2s;font-family:inherit;font-weight:300;letter-spacing:.03em}
 .admin-tab:hover{color:var(--paper)}
 .admin-tab.active{color:var(--pop1);font-weight:500}
-.admin-content{flex:1;overflow-y:auto;padding:2rem 3rem}
-.admin-section{display:none;max-width:750px}
+.admin-content{flex:1;overflow-y:auto;padding:1.5rem}
+.admin-section{display:none}
 .admin-section.active{display:block}
-.admin-section h3{font-family:"Noto Serif SC",serif;font-size:1.3rem;font-weight:600;margin-bottom:2rem;letter-spacing:.04em}
-.fg{margin-bottom:1.4rem}
-.fg label{display:block;font-size:.75rem;font-weight:500;color:var(--muted);margin-bottom:.4rem;letter-spacing:.08em;text-transform:uppercase}
-.fg input,.fg textarea,.fg select{width:100%;padding:.7rem 1rem;border:1px solid var(--dim);background:transparent;color:var(--paper);font-size:.9rem;font-family:inherit;outline:none;transition:border-color .3s;font-weight:300}
-.fg textarea{min-height:80px;resize:vertical}
+.admin-section h3{font-family:"Noto Serif SC",serif;font-size:1rem;font-weight:600;margin-bottom:1.2rem;letter-spacing:.04em}
+/* 右侧实时预览 */
+.admin-preview{width:45%;flex-shrink:0;border-left:1px solid var(--border);background:#111;position:relative;overflow:hidden}
+.admin-preview iframe{width:100%;height:100%;border:none;transform:scale(.55);transform-origin:top left;width:182%;height:182%}
+.admin-preview .preview-label{position:absolute;top:8px;right:12px;font-size:.6rem;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;z-index:2;pointer-events:none}
+/* 表单 */
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.7rem;font-weight:500;color:var(--muted);margin-bottom:.3rem;letter-spacing:.06em;text-transform:uppercase}
+.fg input,.fg textarea,.fg select{width:100%;padding:.55rem .8rem;border:1px solid var(--dim);background:transparent;color:var(--paper);font-size:.82rem;font-family:inherit;outline:none;transition:border-color .3s;font-weight:300;border-radius:4px}
+.fg textarea{min-height:70px;resize:vertical}
 .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--pop1)}
-.fg .hint-text{font-size:.7rem;color:var(--dim);margin-top:.3rem;font-weight:300}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.upload-area{border:1px dashed var(--dim);padding:2.5rem;text-align:center;cursor:pointer;transition:all .3s;margin-top:.5rem}
+.fg .hint-text{font-size:.65rem;color:var(--dim);margin-top:.2rem;font-weight:300}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+/* 色卡系统 */
+.color-palette{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.5rem}
+.color-palette .palette-dot{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative}
+.color-palette .palette-dot:hover{transform:scale(1.15);z-index:1}
+.color-palette .palette-dot.active{border-color:#fff;box-shadow:0 0 0 2px var(--pop1)}
+.color-palette .palette-dot.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+/* 上传 */
+.upload-area{border:1px dashed var(--dim);padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;margin-top:.3rem;border-radius:8px}
 .upload-area:hover{border-color:var(--pop1)}
-.upload-area .icon{font-size:2rem;margin-bottom:.8rem}
-.upload-area .txt{color:var(--muted);font-size:.85rem;font-weight:300}
-.upload-area .progress{width:100%;height:2px;background:var(--dim);margin-top:1rem;display:none}
+.upload-area .icon{font-size:1.5rem;margin-bottom:.5rem;transition:all .3s}
+.upload-area.uploaded{border-color:var(--pop4);border-style:solid;background:rgba(124,255,63,.04)}
+.upload-area.uploaded .icon{font-size:1.5rem}
+.upload-area .txt{color:var(--muted);font-size:.8rem;font-weight:300}
+.upload-area .progress{width:100%;height:2px;background:var(--dim);margin-top:.8rem;display:none}
 .upload-area .progress-bar{height:100%;background:var(--pop1);transition:width .3s;width:0}
 .upload-area input[type=file]{display:none}
-.color-grid{display:flex;gap:.5rem;flex-wrap:wrap}
-.color-swatch{width:36px;height:36px;cursor:pointer;border:1px solid transparent;transition:all .2s}
-.color-swatch:hover{transform:scale(1.1)}
-.color-swatch.active{border-color:var(--paper)}
-.video-edit-card{border:1px solid var(--border);padding:1.2rem;margin-bottom:.8rem}
-.video-edit-card .row{display:grid;grid-template-columns:1.5fr 1fr 80px 80px 50px;gap:.5rem;align-items:end}
-.video-edit-card input,.video-edit-card select{padding:.5rem .7rem;border:1px solid var(--dim);background:transparent;color:var(--paper);font-size:.8rem;font-family:inherit;font-weight:300}
-.video-edit-card .del-btn{background:transparent;color:var(--pop1);border:1px solid var(--pop1);cursor:pointer;padding:.5rem;font-size:.8rem;transition:all .2s}
+/* 视频编辑卡片 */
+.video-edit-card{border:1px solid var(--border);padding:.8rem;margin-bottom:.6rem;border-radius:6px}
+.video-edit-card .row{display:grid;grid-template-columns:1.5fr 1fr 70px 70px 40px;gap:.4rem;align-items:end}
+.video-edit-card input,.video-edit-card select{padding:.4rem .5rem;border:1px solid var(--dim);background:transparent;color:var(--paper);font-size:.78rem;font-family:inherit;font-weight:300;border-radius:4px}
+.video-edit-card .del-btn{background:transparent;color:var(--pop1);border:1px solid var(--pop1);cursor:pointer;padding:.4rem;font-size:.75rem;transition:all .2s;border-radius:4px}
 .video-edit-card .del-btn:hover{background:var(--pop1);color:#fff}
-.video-edit-card .file-info{font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:300}
-.video-edit-card .upload-label{cursor:pointer;padding:.5rem .8rem;border:1px solid var(--dim);font-size:.8rem;color:var(--muted);transition:all .2s;display:inline-block;white-space:nowrap}
+.video-edit-card .file-info{font-size:.65rem;color:var(--muted);margin-top:.2rem;font-weight:300}
+.video-edit-card .file-info.uploaded{color:var(--pop4);font-weight:500}
+.video-edit-card .upload-label{cursor:pointer;padding:.4rem .6rem;border:1px solid var(--dim);font-size:.75rem;color:var(--muted);transition:all .2s;display:inline-block;white-space:nowrap;border-radius:4px}
 .video-edit-card .upload-label:hover{border-color:var(--pop3);color:var(--pop3)}
-.add-btn{width:100%;padding:.8rem;border:1px dashed var(--dim);background:transparent;cursor:pointer;color:var(--muted);font-size:.85rem;font-weight:300;letter-spacing:.04em;transition:all .2s;font-family:inherit}
+.video-edit-card .upload-label.uploaded{border-color:var(--pop4);color:var(--pop4)}
+.add-btn{width:100%;padding:.6rem;border:1px dashed var(--dim);background:transparent;cursor:pointer;color:var(--muted);font-size:.8rem;font-weight:300;letter-spacing:.04em;transition:all .2s;font-family:inherit;border-radius:6px}
 .add-btn:hover{border-color:var(--pop2);color:var(--pop2)}
-.range-wrap{display:flex;align-items:center;gap:1rem}
-.range-wrap input[type=range]{flex:1;accent-color:var(--pop1)}
-.range-wrap .range-val{min-width:40px;text-align:center;font-weight:500;color:var(--pop1);font-size:.85rem}
-.bg-preview{width:100%;height:120px;object-fit:cover;margin-top:.5rem;border:1px solid var(--border);display:none}
+.range-wrap{display:flex;align-items:center;gap:.8rem}
+.range-wrap input[type=range]{flex:1;accent-color:var(--pop1);height:4px}
+.range-wrap .range-val{min-width:36px;text-align:center;font-weight:500;color:var(--pop1);font-size:.8rem}
+.bg-preview{width:100%;height:100px;object-fit:cover;margin-top:.5rem;border:1px solid var(--border);display:none;border-radius:6px}
 .bg-preview.show{display:block}
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:300;padding:.7rem 1.5rem;background:var(--pop4);color:#000;border-radius:8px;font-size:.85rem;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;letter-spacing:.04em}
+.toast.show{opacity:1}
+.toast.error{background:var(--pop1);color:#fff}
 
 /* ============ 前台 ============ */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative}
@@ -309,121 +329,150 @@ body{
   <div class="admin-header">
     <h2>PORTFOLIO — ADMIN</h2>
     <div class="actions">
-      <button class="btn-preview" id="btnPreview">预览</button>
-      <button class="btn-save" id="btnSave">保存</button>
-      <button class="btn-exit" id="btnExit">退出</button>
+      <button class="btn-preview" id="btnPreview">👁 预览</button>
+      <button class="btn-save" id="btnSave">💾 保存并发布</button>
+      <button class="btn-exit" id="btnExit">✕ 退出</button>
     </div>
   </div>
   <div class="admin-body">
-    <div class="admin-tabs">
-      <button class="admin-tab active" data-tab="tab-basic">基本资料</button>
-      <button class="admin-tab" data-tab="tab-videos">视频管理</button>
-      <button class="admin-tab" data-tab="tab-resume">简历管理</button>
-      <button class="admin-tab" data-tab="tab-background">背景设置</button>
-      <button class="admin-tab" data-tab="tab-music">背景音乐</button>
-      <button class="admin-tab" data-tab="tab-style">配色布局</button>
-      <button class="admin-tab" data-tab="tab-password">修改密码</button>
-    </div>
-    <div class="admin-content">
-
-      <div class="admin-section active" id="tab-basic">
-        <h3>基本资料</h3>
-        <div class="fg"><label>眉题</label><input type="text" id="edOverline"></div>
-        <div class="fg"><label>名字</label><input type="text" id="edName"></div>
-        <div class="fg"><label>介绍语</label><input type="text" id="edSubtitle"></div>
-        <div class="fg"><label>关于我 · 标题</label><input type="text" id="edAboutTitle"></div>
-        <div class="fg"><label>关于我 · 正文</label><textarea id="edAboutText" rows="4"></textarea></div>
-        <div class="fg"><label>技能标签（逗号分隔）</label><input type="text" id="edSkills"></div>
-        <h3 style="margin-top:2.5rem">联系方式</h3>
-        <div class="two-col"><div class="fg"><label>邮箱</label><input type="text" id="edEmail"></div><div class="fg"><label>微信</label><input type="text" id="edWechat"></div></div>
-        <div class="fg"><label>手机</label><input type="text" id="edPhone"></div>
+    <div class="admin-left">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="tab-basic">👤 基本资料</button>
+        <button class="admin-tab" data-tab="tab-videos">🎬 作品管理</button>
+        <button class="admin-tab" data-tab="tab-resume">📄 简历</button>
+        <button class="admin-tab" data-tab="tab-background">🖼 背景</button>
+        <button class="admin-tab" data-tab="tab-music">🎵 音乐</button>
+        <button class="admin-tab" data-tab="tab-style">🎨 配色布局</button>
+        <button class="admin-tab" data-tab="tab-password">🔒 密码</button>
       </div>
+      <div class="admin-content">
 
-      <div class="admin-section" id="tab-videos">
-        <h3>视频作品</h3>
-        <p style="color:var(--muted);font-size:.85rem;font-weight:300;margin-bottom:2rem">支持在线链接或本地上传</p>
-        <div id="videoEditList"></div>
-        <button class="add-btn" id="btnAddVideo">＋ 添加作品</button>
-      </div>
+        <!-- 基本资料 -->
+        <div class="admin-section active" id="tab-basic">
+          <h3>👤 基本资料</h3>
+          <div class="fg"><label>眉题</label><input type="text" id="edOverline" oninput="livePreview()"></div>
+          <div class="fg"><label>你的名字</label><input type="text" id="edName" oninput="livePreview()"></div>
+          <div class="fg"><label>一句话介绍</label><input type="text" id="edSubtitle" oninput="livePreview()"></div>
+          <div class="fg"><label>关于我 · 标题</label><input type="text" id="edAboutTitle" oninput="livePreview()"></div>
+          <div class="fg"><label>关于我 · 正文</label><textarea id="edAboutText" rows="3" oninput="livePreview()"></textarea></div>
+          <div class="fg"><label>技能标签（逗号分隔）</label><input type="text" id="edSkills" oninput="livePreview()"></div>
+          <h3 style="margin-top:1.5rem">📬 联系方式</h3>
+          <div class="two-col"><div class="fg"><label>邮箱</label><input type="text" id="edEmail" oninput="livePreview()"></div><div class="fg"><label>微信</label><input type="text" id="edWechat" oninput="livePreview()"></div></div>
+          <div class="fg"><label>手机</label><input type="text" id="edPhone" oninput="livePreview()"></div>
+        </div>
 
-      <div class="admin-section" id="tab-resume">
-        <h3>简历图片</h3>
-        <p style="color:var(--muted);font-size:.85rem;font-weight:300;margin-bottom:2rem">上传简历图片（JPG/PNG）</p>
-        <div class="upload-area" id="resumeUploadArea">
-          <div class="icon">＋</div><div class="txt">点击或拖拽上传简历</div>
-          <div class="progress" id="resumeProgress"><div class="progress-bar" id="resumeProgressBar"></div></div>
-          <input type="file" id="resumeFileInput" accept="image/*">
+        <!-- 视频管理 -->
+        <div class="admin-section" id="tab-videos">
+          <h3>🎬 作品管理</h3>
+          <p style="color:var(--muted);font-size:.75rem;font-weight:300;margin-bottom:1rem">支持在线链接或本地上传 · 上传后显示 ✓ 图标</p>
+          <div id="videoEditList"></div>
+          <button class="add-btn" id="btnAddVideo">＋ 添加作品</button>
         </div>
-        <p id="resumeStatus" style="margin-top:.8rem;font-size:.8rem;color:var(--muted);font-weight:300"></p>
-      </div>
 
-      <!-- 背景设置 -->
-      <div class="admin-section" id="tab-background">
-        <h3>背景设置</h3>
-        <p style="color:var(--muted);font-size:.85rem;font-weight:300;margin-bottom:1.5rem">上传图片/视频作为网页背景（JPG/GIF/MOV/MP4）</p>
-        <div class="fg"><label>当前背景类型</label><select id="edBgType"><option value="fluid">流体光效（默认）</option><option value="image">静态图片</option><option value="video">动态视频</option></select></div>
-        <div class="upload-area" id="bgUploadArea">
-          <div class="icon">🖼</div><div class="txt">点击或拖拽上传背景文件</div>
-          <div class="progress" id="bgProgress"><div class="progress-bar" id="bgProgressBar"></div></div>
-          <input type="file" id="bgFileInput" accept="image/jpeg,image/gif,video/mp4,video/quicktime,video/mov">
-        </div>
-        <p style="color:var(--muted);font-size:.7rem;font-weight:300;margin-top:.5rem">支持：JPG / GIF / MP4 / MOV</p>
-        <img class="bg-preview" id="bgPreview">
-        <video class="bg-preview" id="bgVideoPreview" muted loop playsinline></video>
-        <div style="margin-top:1rem">
-          <button class="add-btn" id="btnResetBg">↺ 恢复流体光效</button>
-        </div>
-      </div>
-
-      <!-- 背景音乐 -->
-      <div class="admin-section" id="tab-music">
-        <h3>背景音乐</h3>
-        <p style="color:var(--muted);font-size:.85rem;font-weight:300;margin-bottom:1.5rem">上传音频文件或填写在线链接</p>
-        <div class="fg"><label>音乐名称</label><input type="text" id="edMusicName" placeholder="例如：再飞行 — 逃跑计划"></div>
-        <div class="fg"><label>在线音频链接</label><input type="text" id="edMusicUrl" placeholder="https://...mp3"><span class="hint-text">默认使用《再飞行》逃跑计划</span></div>
-        <div class="upload-area" id="musicUploadArea">
-          <div class="icon">🎵</div><div class="txt">点击或拖拽上传音频文件</div>
-          <div class="progress" id="musicProgress"><div class="progress-bar" id="musicProgressBar"></div></div>
-          <input type="file" id="musicFileInput" accept="audio/mp3,audio/wav,audio/mpeg,audio/ogg,audio/*">
-        </div>
-        <p style="color:var(--muted);font-size:.7rem;font-weight:300;margin-top:.5rem">支持：MP3 / WAV / OGG</p>
-        <p id="musicStatus" style="margin-top:.8rem;font-size:.8rem;color:var(--muted);font-weight:300"></p>
-        <div style="margin-top:1rem">
-          <button class="add-btn" id="btnResetMusic" style="margin-bottom:.5rem">↺ 恢复默认音乐</button>
-          <button class="add-btn" id="btnPreviewMusic" style="border-color:var(--pop3);color:var(--pop3)">▶ 试听当前音乐</button>
-        </div>
-      </div>
-
-      <div class="admin-section" id="tab-style">
-        <h3>配色</h3>
-        <div class="fg"><label>背景色</label>
-          <div class="color-grid" id="bgSwatches">
-            <span class="color-swatch active" data-color="#0D0D0D" style="background:#0D0D0D" title="墨黑"></span>
-            <span class="color-swatch" data-color="#1A1A1E" style="background:#1A1A1E" title="深灰"></span>
-            <span class="color-swatch" data-color="#0F1115" style="background:#0F1115" title="蓝黑"></span>
-            <span class="color-swatch" data-color="#FFF8F0" style="background:#FFF8F0" title="奶油白"></span>
+        <!-- 简历 -->
+        <div class="admin-section" id="tab-resume">
+          <h3>📄 简历图片</h3>
+          <p style="color:var(--muted);font-size:.75rem;font-weight:300;margin-bottom:1rem">上传简历图片（JPG/PNG），上传成功边框变绿</p>
+          <div class="upload-area" id="resumeUploadArea">
+            <div class="icon">📤</div><div class="txt">点击或拖拽上传简历</div>
+            <div class="progress" id="resumeProgress"><div class="progress-bar" id="resumeProgressBar"></div></div>
+            <input type="file" id="resumeFileInput" accept="image/*">
           </div>
-          <input type="text" id="edBg" style="margin-top:.5rem">
+          <p id="resumeStatus" style="margin-top:.5rem;font-size:.75rem;color:var(--muted);font-weight:300"></p>
         </div>
-        <div class="two-col"><div class="fg"><label>强调色1 粉</label><input type="text" id="edC1"></div><div class="fg"><label>强调色2 金</label><input type="text" id="edC2"></div></div>
-        <div class="two-col"><div class="fg"><label>强调色3 青</label><input type="text" id="edC3"></div><div class="fg"><label>强调色4 绿</label><input type="text" id="edC4"></div></div>
-        <div class="fg"><label>强调色5 紫</label><input type="text" id="edC5"></div>
-        <h3 style="margin-top:2.5rem">布局</h3>
-        <div class="fg"><label>标题字号</label><div class="range-wrap"><input type="range" id="edHeroSize" min="2.5" max="8" step="0.1"><span class="range-val" id="heroSizeVal">6rem</span></div></div>
-        <div class="fg"><label>网格列数</label><div class="range-wrap"><input type="range" id="edGridCols" min="2" max="5" step="1"><span class="range-val" id="gridColsVal">3</span></div></div>
-      </div>
 
-      <div class="admin-section" id="tab-password">
-        <h3>修改密码</h3>
-        <div class="fg"><label>当前密码</label><input type="password" id="edOldPwd"></div>
-        <div class="fg"><label>新密码</label><input type="password" id="edNewPwd"></div>
-        <div class="fg"><label>确认新密码</label><input type="password" id="edNewPwd2"></div>
-        <button class="add-btn" id="btnChangePwd" style="margin-top:1rem">更新密码</button>
-      </div>
+        <!-- 背景 -->
+        <div class="admin-section" id="tab-background">
+          <h3>🖼 背景设置</h3>
+          <div class="fg"><label>背景类型</label><select id="edBgType" onchange="livePreview()"><option value="fluid">流体光效</option><option value="image">静态图片</option><option value="video">动态视频</option></select></div>
+          <div class="upload-area" id="bgUploadArea">
+            <div class="icon">🖼</div><div class="txt">点击或拖拽上传背景 (JPG/GIF/MP4/MOV)</div>
+            <div class="progress" id="bgProgress"><div class="progress-bar" id="bgProgressBar"></div></div>
+            <input type="file" id="bgFileInput" accept="image/jpeg,image/gif,video/mp4,video/quicktime,video/mov">
+          </div>
+          <button class="add-btn" id="btnResetBg" style="margin-top:.5rem">↺ 恢复流体光效</button>
+        </div>
 
+        <!-- 音乐 -->
+        <div class="admin-section" id="tab-music">
+          <h3>🎵 背景音乐</h3>
+          <div class="fg"><label>音乐名称</label><input type="text" id="edMusicName"></div>
+          <div class="fg"><label>在线链接</label><input type="text" id="edMusicUrl" placeholder="https://...mp3"><span class="hint-text">默认：《再飞行》逃跑计划</span></div>
+          <div class="upload-area" id="musicUploadArea">
+            <div class="icon">🎵</div><div class="txt">点击或拖拽上传音频 (MP3/WAV/OGG)</div>
+            <div class="progress" id="musicProgress"><div class="progress-bar" id="musicProgressBar"></div></div>
+            <input type="file" id="musicFileInput" accept="audio/mp3,audio/wav,audio/mpeg,audio/ogg,audio/*">
+          </div>
+          <p id="musicStatus" style="margin-top:.5rem;font-size:.75rem;color:var(--muted);font-weight:300"></p>
+          <button class="add-btn" id="btnPreviewMusic" style="margin-top:.5rem;border-color:var(--pop3);color:var(--pop3)">▶ 试听</button>
+          <button class="add-btn" id="btnResetMusic">↺ 恢复默认</button>
+        </div>
+
+        <!-- 配色布局 -->
+        <div class="admin-section" id="tab-style">
+          <h3>🎨 背景色</h3>
+          <div class="color-palette" id="bgPalette">
+            <span class="palette-dot" data-color="#0D0D0D" style="background:#0D0D0D" title="墨黑"></span>
+            <span class="palette-dot" data-color="#1A1A1E" style="background:#1A1A1E" title="深灰"></span>
+            <span class="palette-dot" data-color="#0F1115" style="background:#0F1115" title="蓝黑"></span>
+            <span class="palette-dot" data-color="#FFF8F0" style="background:#FFF8F0" title="奶油白"></span>
+            <span class="palette-dot" data-color="#F0F4FF" style="background:#F0F4FF" title="淡蓝"></span>
+            <span class="palette-dot" data-color="#FFF5F5" style="background:#FFF5F5" title="淡粉"></span>
+          </div>
+          <input type="text" id="edBg" onchange="livePreview()" style="margin-top:.3rem;font-size:.75rem">
+
+          <h3>🎯 强调色</h3>
+          <div class="color-palette" id="accentPalette">
+            <span class="palette-dot active" data-target="c1" data-color="#FF3366" style="background:#FF3366" title="热粉"></span>
+            <span class="palette-dot" data-target="c1" data-color="#FF6B9D" style="background:#FF6B9D" title="暖粉"></span>
+            <span class="palette-dot" data-target="c1" data-color="#FF0D4D" style="background:#FF0D4D" title="深红"></span>
+            <span class="palette-dot" data-target="c1" data-color="#FF9500" style="background:#FF9500" title="橙色"></span>
+            <span style="width:8px"></span>
+            <span class="palette-dot" data-target="c2" data-color="#FFB800" style="background:#FFB800" title="金色"></span>
+            <span class="palette-dot" data-target="c2" data-color="#FFD60A" style="background:#FFD60A" title="亮黄"></span>
+            <span class="palette-dot" data-target="c2" data-color="#FF9F0A" style="background:#FF9F0A" title="琥珀"></span>
+            <span style="width:8px"></span>
+            <span class="palette-dot" data-target="c3" data-color="#00E5FF" style="background:#00E5FF" title="电青"></span>
+            <span class="palette-dot" data-target="c3" data-color="#00B4D8" style="background:#00B4D8" title="深青"></span>
+            <span class="palette-dot" data-target="c3" data-color="#64D2FF" style="background:#64D2FF" title="浅青"></span>
+            <span style="width:8px"></span>
+            <span class="palette-dot" data-target="c4" data-color="#7CFF3F" style="background:#7CFF3F" title="霓绿"></span>
+            <span class="palette-dot" data-target="c4" data-color="#34C759" style="background:#34C759" title="果绿"></span>
+            <span style="width:8px"></span>
+            <span class="palette-dot" data-target="c5" data-color="#BF5AF2" style="background:#BF5AF2" title="亮紫"></span>
+            <span class="palette-dot" data-target="c5" data-color="#AF52DE" style="background:#AF52DE" title="深紫"></span>
+          </div>
+          <div class="two-col"><div class="fg"><label>强调色1</label><input type="text" id="edC1" onchange="livePreview()"></div><div class="fg"><label>强调色2</label><input type="text" id="edC2" onchange="livePreview()"></div></div>
+          <div class="two-col"><div class="fg"><label>强调色3</label><input type="text" id="edC3" onchange="livePreview()"></div><div class="fg"><label>强调色4</label><input type="text" id="edC4" onchange="livePreview()"></div></div>
+          <div class="fg"><label>强调色5</label><input type="text" id="edC5" onchange="livePreview()"></div>
+
+          <h3>📐 布局调节</h3>
+          <div class="fg"><label>标题大小</label><div class="range-wrap"><input type="range" id="edHeroSize" min="2" max="8" step="0.1" oninput="livePreview()"><span class="range-val" id="heroSizeVal">6rem</span></div></div>
+          <div class="fg"><label>网格列数</label><div class="range-wrap"><input type="range" id="edGridCols" min="2" max="4" step="1" oninput="livePreview()"><span class="range-val" id="gridColsVal">3</span></div></div>
+          <div class="fg"><label>卡片间距</label><div class="range-wrap"><input type="range" id="edCardGap" min="4" max="40" step="2" oninput="livePreview()"><span class="range-val" id="cardGapVal">16px</span></div></div>
+        </div>
+
+        <!-- 密码 -->
+        <div class="admin-section" id="tab-password">
+          <h3>🔒 修改后台密码</h3>
+          <div class="fg"><label>当前密码</label><input type="password" id="edOldPwd"></div>
+          <div class="fg"><label>新密码</label><input type="password" id="edNewPwd"></div>
+          <div class="fg"><label>确认新密码</label><input type="password" id="edNewPwd2"></div>
+          <button class="add-btn" id="btnChangePwd" style="margin-top:.5rem">更新密码</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- 右侧实时预览 -->
+    <div class="admin-preview" id="adminPreview">
+      <span class="preview-label">实时预览</span>
+      <iframe id="previewFrame" src="about:blank"></iframe>
     </div>
   </div>
 </div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
 
 <!-- ================================================================ -->
 <script>
@@ -439,7 +488,7 @@ const DEFAULTS={
   skills:'导演,剪辑,调色,创意策划,品牌短片,内容运营',
   email:'hello@xieshiqing.com',wechat:'XSQ_FILM',phone:'+86 138-xxxx-xxxx',
   bg:'#0D0D0D',c1:'#FF3366',c2:'#FFB800',c3:'#00E5FF',c4:'#7CFF3F',c5:'#BF5AF2',
-  heroSize:'clamp(3rem,7vw,6rem)',gridCols:3,
+  heroSize:'clamp(3rem,7vw,6rem)',gridCols:3,cardGap:16,
   bgType:'fluid',bgFileId:null,
   musicName:'再飞行 — 逃跑计划',
   musicUrl:'https://music.163.com/song/media/outer/url?id=28267530.mp3',
@@ -468,7 +517,76 @@ function applyTheme(){
   s.setProperty('--c1',data.c1);s.setProperty('--c2',data.c2);s.setProperty('--c3',data.c3);
   s.setProperty('--c4',data.c4);s.setProperty('--c5',data.c5);
   s.setProperty('--hero-size',data.heroSize);s.setProperty('--grid-cols',data.gridCols);
+  s.setProperty('--card-gap',data.cardGap+'px');
+  const grid=document.getElementById('videoGrid');if(grid)grid.style.gap=data.cardGap+'px';
   document.body.style.background=data.bg;
+}
+
+// Toast
+function showToast(msg,isError){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.className='toast'+(isError?' error':'');
+  t.classList.add('show');
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// 实时预览：把当前修改临时应用到前台
+function livePreview(){
+  if(!adminOverlay.classList.contains('show'))return;
+  // 从输入框读取值临时应用
+  const get=(id)=>document.getElementById(id)?.value||'';
+  const elName=get('edName'),elSub=get('edSubtitle'),elOverline=get('edOverline');
+  const elAboutT=get('edAboutTitle'),elAboutTx=get('edAboutText'),elSkills=get('edSkills');
+  if(elName)document.getElementById('heroName').textContent=elName;
+  if(elSub)document.getElementById('heroSub').textContent=elSub;
+  if(elOverline)document.getElementById('heroOverline').textContent=elOverline;
+  if(elAboutT)document.getElementById('aboutTitle').textContent=elAboutT;
+  if(elAboutTx)document.getElementById('aboutText').textContent=elAboutTx;
+  // 背景色
+  const elBg=get('edBg');if(elBg){document.body.style.background=elBg;data.bg=elBg}
+  // 强调色
+  ['c1','c2','c3','c4','c5'].forEach((k,i)=>{
+    const v=get('edC'+(i+1));if(v){document.documentElement.style.setProperty('--'+k,v);data[k]=v}
+  });
+  // 布局
+  const heroSize=document.getElementById('edHeroSize')?.value;
+  if(heroSize){const v='clamp(3rem,7vw,'+heroSize+'rem)';document.documentElement.style.setProperty('--hero-size',v);data.heroSize=v;document.getElementById('heroSizeVal').textContent=v}
+  const gridCols=document.getElementById('edGridCols')?.value;
+  if(gridCols){document.documentElement.style.setProperty('--grid-cols',gridCols);data.gridCols=parseInt(gridCols);document.getElementById('gridColsVal').textContent=gridCols}
+  const cardGap=document.getElementById('edCardGap')?.value;
+  if(cardGap){data.cardGap=parseInt(cardGap);document.getElementById('cardGapVal').textContent=cardGap+'px';const g=document.getElementById('videoGrid');if(g)g.style.gap=cardGap+'px'}
+  // 技能标签
+  if(elSkills){
+    document.getElementById('heroTags').innerHTML='';
+    elSkills.split(',').map(s=>s.trim()).filter(s=>s).forEach(s=>{const sp=document.createElement('span');sp.className='tag';sp.textContent=s;document.getElementById('heroTags').appendChild(sp)});
+  }
+  // 联系方式
+  const em=get('edEmail'),we=get('edWechat'),ph=get('edPhone');
+  if(em||we||ph){
+    const cr=document.getElementById('contactRow');cr.innerHTML='';
+    [{icon:'✉',label:'Email',value:get('edEmail')},{icon:'💬',label:'WeChat',value:get('edWechat')},{icon:'📞',label:'Phone',value:get('edPhone')}].forEach(c=>{const d=document.createElement('div');d.className='contact-card';d.innerHTML=`<div class="icon">${c.icon}</div><div class="label">${c.label}</div><div class="value">${c.value}</div>`;cr.appendChild(d)});
+  }
+}
+
+// 色卡点击处理
+function initPalettes(){
+  // 背景色卡
+  document.querySelectorAll('#bgPalette .palette-dot').forEach(d=>{d.onclick=()=>{
+    document.querySelectorAll('#bgPalette .palette-dot').forEach(x=>x.classList.remove('active'));
+    d.classList.add('active');document.getElementById('edBg').value=d.dataset.color;
+    data.bg=d.dataset.color;document.body.style.background=data.bg;
+  }});
+  // 强调色卡
+  document.querySelectorAll('#accentPalette .palette-dot').forEach(d=>{d.onclick=()=>{
+    const t=d.dataset.target;const c=d.dataset.color;if(!t||!c)return;
+    // 同 target 的去激活
+    document.querySelectorAll('#accentPalette .palette-dot[data-target=\"'+t+'\"]').forEach(x=>x.classList.remove('active'));
+    d.classList.add('active');
+    // 更新输入框
+    const idx=parseInt(t.slice(1));
+    document.getElementById('edC'+idx).value=c;
+    data[t]=c;document.documentElement.style.setProperty('--'+t,c);
+  }});
 }
 
 async function loadFiles(){
@@ -616,6 +734,7 @@ const cardGrads=[
 
 function renderFront(){
   applyTheme();updateBgDisplay();
+  const g=document.getElementById('videoGrid');if(g)g.style.gap=(data.cardGap||16)+'px';
   document.getElementById('heroOverline').textContent=data.overline;
   document.getElementById('heroName').textContent=data.name;
   document.getElementById('heroSub').textContent=data.subtitle;
@@ -724,7 +843,7 @@ document.getElementById('gearBtn').onclick=()=>{loginOverlay.classList.add('show
 document.getElementById('loginBtn').onclick=()=>{if(document.getElementById('loginPwd').value===getPwd()){loginOverlay.classList.remove('show');openAdmin()}else alert('密码错误')};
 document.getElementById('loginPwd').onkeydown=e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()};
 
-function openAdmin(){adminOverlay.classList.add('show');syncAdmin()}
+function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes()}
 document.getElementById('btnExit').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 document.getElementById('btnPreview').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 
@@ -748,7 +867,11 @@ function syncAdmin(){
   document.getElementById('heroSizeVal').textContent=data.heroSize;
   document.getElementById('edGridCols').value=data.gridCols;
   document.getElementById('gridColsVal').textContent=data.gridCols;
-  document.querySelectorAll('#bgSwatches .color-swatch').forEach(d=>d.classList.toggle('active',d.dataset.color===data.bg));
+  document.getElementById('edCardGap').value=data.cardGap||16;
+  document.getElementById('cardGapVal').textContent=(data.cardGap||16)+'px';
+  // 更新色卡 active 状态
+  document.querySelectorAll('#bgPalette .palette-dot').forEach(d=>d.classList.toggle('active',d.dataset.color===data.bg));
+  document.querySelectorAll('#accentPalette .palette-dot').forEach(d=>d.classList.toggle('active',d.dataset.color===data['c'+d.dataset.target?.slice(1)]));
   document.getElementById('edOldPwd').value='';document.getElementById('edNewPwd').value='';document.getElementById('edNewPwd2').value='';
   f('edBgType',data.bgType);f('edMusicName',data.musicName);f('edMusicUrl',data.musicUrl);
   updateMusicStatus();updateResumeStatus();
@@ -774,16 +897,12 @@ function updateMusicStatus(){
   else s.textContent='⚠ 未设置音乐';
 }
 
-// 色块
-document.querySelectorAll('#bgSwatches .color-swatch').forEach(sw=>{sw.onclick=()=>{
-  document.querySelectorAll('#bgSwatches .color-swatch').forEach(s=>s.classList.remove('active'));
-  sw.classList.add('active');document.getElementById('edBg').value=sw.dataset.color;
-  data.bg=sw.dataset.color;document.body.style.background=data.bg;
-}});
+// 色块（旧版兼容，已迁移到 initPalettes）
 
-['edHeroSize','edGridCols'].forEach(id=>{document.getElementById(id).oninput=function(){
+['edHeroSize','edGridCols','edCardGap'].forEach(id=>{document.getElementById(id).oninput=function(){
   if(id==='edHeroSize'){const v='clamp(3rem,7vw,'+this.value+'rem)';document.getElementById('heroSizeVal').textContent=v;data.heroSize=v}
   if(id==='edGridCols'){document.getElementById('gridColsVal').textContent=this.value;data.gridCols=parseInt(this.value)}
+  if(id==='edCardGap'){document.getElementById('cardGapVal').textContent=this.value+'px';data.cardGap=parseInt(this.value);const g=document.getElementById('videoGrid');if(g)g.style.gap=this.value+'px'}
   applyTheme();
 }});
 
@@ -798,7 +917,7 @@ function renderVideoEditor(){
   });
   c.querySelectorAll('input[type=text],select').forEach(el=>{if(!el.classList.contains('file-input'))el.onchange=function(){data.videos[parseInt(this.dataset.idx)][this.dataset.field]=this.value}});
   c.querySelectorAll('.del-btn').forEach(btn=>{btn.onclick=function(){const idx=parseInt(this.dataset.idx);if(confirm('删除？')){const v=data.videos[idx];if(v.key){if(videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}if(videoThumbnails[v.key]){delete videoThumbnails[v.key];delete thumbnailCache[v.key]}db.transaction('videos','readwrite').objectStore('videos').delete(v.key)}data.videos.splice(idx,1);renderVideoEditor()}}});
-  c.querySelectorAll('.file-input').forEach(input=>{input.onchange=async function(){const idx=parseInt(this.dataset.idx);const file=this.files[0];if(!file)return;const isImg=file.type.startsWith('image/');const v=data.videos[idx];if(v.key&&videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}const tx=db.transaction('videos','readwrite');const store=tx.objectStore('videos');const fileKey='vid_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((r,rej)=>{const req=store.put({key:fileKey,blob:file,name:file.name,size:file.size});req.onsuccess=()=>{videoBlobUrls[fileKey]=URL.createObjectURL(file);v.key=fileKey;v.isLocal=true;v.embedUrl='';v.mediaType=isImg?'image':'video';r()};req.onerror=()=>{alert('文件过大');rej()}});v.title=v.title||file.name.replace(/\.[^.]+$/,'');v.duration=isImg?'':(v.duration||'0:00');if(isImg){videoThumbnails[fileKey]=videoBlobUrls[fileKey];thumbnailCache[fileKey]=videoBlobUrls[fileKey]}else{generateThumbnail(videoBlobUrls[fileKey],fileKey)}renderVideoEditor()}});
+  c.querySelectorAll('.file-input').forEach(input=>{input.onchange=async function(){const idx=parseInt(this.dataset.idx);const file=this.files[0];if(!file)return;const isImg=file.type.startsWith('image/');const v=data.videos[idx];if(v.key&&videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}const tx=db.transaction('videos','readwrite');const store=tx.objectStore('videos');const fileKey='vid_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((r,rej)=>{const req=store.put({key:fileKey,blob:file,name:file.name,size:file.size});req.onsuccess=()=>{videoBlobUrls[fileKey]=URL.createObjectURL(file);v.key=fileKey;v.isLocal=true;v.embedUrl='';v.mediaType=isImg?'image':'video';r()};req.onerror=()=>{alert('文件过大');rej()}});v.title=v.title||file.name.replace(/\.[^.]+$/,'');v.duration=isImg?'':(v.duration||'0:00');if(isImg){videoThumbnails[fileKey]=videoBlobUrls[fileKey];thumbnailCache[fileKey]=videoBlobUrls[fileKey]}else{generateThumbnail(videoBlobUrls[fileKey],fileKey)}renderVideoEditor();showToast('✓ '+(isImg?'图片':'视频')+'已上传')}});
 }
 document.getElementById('btnAddVideo').onclick=()=>{data.videos.push({title:'新作品',category:'商业片',duration:'0:00',embedUrl:'',isLocal:false,key:null,mediaType:'video'});renderVideoEditor()};
 
@@ -813,7 +932,8 @@ resumeFileInput.onchange=async function(){
   if(resumeBlobUrl)URL.revokeObjectURL(resumeBlobUrl);resumeBlobUrl=URL.createObjectURL(file);data.resumeFileId='main';
   document.getElementById('resumeProgressBar').style.width='100%';
   setTimeout(()=>{document.getElementById('resumeProgress').style.display='none';document.getElementById('resumeProgressBar').style.width='0'},500);
-  updateResumeStatus();
+  document.getElementById('resumeUploadArea').classList.add('uploaded');document.getElementById('resumeUploadArea').querySelector('.icon').textContent='✅';
+  updateResumeStatus();showToast('✓ 简历已上传');
 };
 function updateResumeStatus(){document.getElementById('resumeStatus').textContent=resumeBlobUrl?'✓ 简历已上传':'⚠ 未上传'}
 document.getElementById('resumeUploadArea').ondragover=e=>{e.preventDefault();e.target.style.borderColor='var(--pop1)'};
@@ -833,7 +953,8 @@ bgFileInput.onchange=async function(){
   if(bgBlobUrl)URL.revokeObjectURL(bgBlobUrl);bgBlobUrl=URL.createObjectURL(file);data.bgFileId='main';
   document.getElementById('bgProgressBar').style.width='100%';
   setTimeout(()=>{document.getElementById('bgProgress').style.display='none';document.getElementById('bgProgressBar').style.width='0'},500);
-  document.getElementById('edBgType').value=data.bgType;syncBgTab();updateBgDisplay();
+  document.getElementById('bgUploadArea').classList.add('uploaded');document.getElementById('bgUploadArea').querySelector('.icon').textContent='✅';
+  document.getElementById('edBgType').value=data.bgType;syncBgTab();updateBgDisplay();showToast('✓ 背景已更新');
 };
 document.getElementById('bgUploadArea').ondragover=e=>{e.preventDefault();e.target.style.borderColor='var(--pop1)'};
 document.getElementById('bgUploadArea').ondragleave=e=>{e.target.style.borderColor='var(--dim)'};
@@ -851,7 +972,8 @@ musicFileInput.onchange=async function(){
   if(musicBlobUrl)URL.revokeObjectURL(musicBlobUrl);musicBlobUrl=URL.createObjectURL(file);data.musicFileId='main';data.musicName=file.name.replace(/\.[^.]+$/,'');
   document.getElementById('musicProgressBar').style.width='100%';
   setTimeout(()=>{document.getElementById('musicProgress').style.display='none';document.getElementById('musicProgressBar').style.width='0'},500);
-  updateAudioSrc();playMusic();syncMusicTab();
+  document.getElementById('musicUploadArea').classList.add('uploaded');document.getElementById('musicUploadArea').querySelector('.icon').textContent='✅';
+  updateAudioSrc();playMusic();syncMusicTab();showToast('✓ 音乐已上传');
 };
 document.getElementById('musicUploadArea').ondragover=e=>{e.preventDefault();e.target.style.borderColor='var(--pop1)'};
 document.getElementById('musicUploadArea').ondragleave=e=>{e.target.style.borderColor='var(--dim)'};
@@ -873,10 +995,11 @@ document.getElementById('btnSave').onclick=async()=>{
   data.bg=document.getElementById('edBg').value.trim()||DEFAULTS.bg;
   data.c1=document.getElementById('edC1').value.trim()||DEFAULTS.c1;data.c2=document.getElementById('edC2').value.trim()||DEFAULTS.c2;
   data.c3=document.getElementById('edC3').value.trim()||DEFAULTS.c3;data.c4=document.getElementById('edC4').value.trim()||DEFAULTS.c4;data.c5=document.getElementById('edC5').value.trim()||DEFAULTS.c5;
+  data.cardGap=parseInt(document.getElementById('edCardGap').value)||16;
   data.bgType=document.getElementById('edBgType').value;
   data.musicName=document.getElementById('edMusicName').value.trim();
   data.musicUrl=document.getElementById('edMusicUrl').value.trim();
-  await saveToDB();adminOverlay.classList.remove('show');renderFront();updateAudioSrc();if(!musicPlaying)playMusic();alert('✓ 已保存');
+  await saveToDB();adminOverlay.classList.remove('show');renderFront();updateAudioSrc();if(!musicPlaying)playMusic();showToast('💾 已保存！刷新网页查看最新效果')
 };
 
 document.getElementById('btnChangePwd').onclick=()=>{
