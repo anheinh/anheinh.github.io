@@ -2,7 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>PORTFOLIO</title>
 <style>
 /* ============================================================
@@ -50,7 +52,7 @@ body{
 .music-btn{
   position:fixed;bottom:28px;right:28px;z-index:100;
   width:44px;height:44px;border-radius:50%;border:1px solid var(--dim);
-  background:rgba(13,13,13,.7);backdrop-filter:blur(10px);
+  background:rgba(13,13,13,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   color:var(--muted);cursor:pointer;font-size:1rem;
   display:flex;align-items:center;justify-content:center;
   transition:all .4s;
@@ -63,7 +65,7 @@ body{
 .gear-btn{
   position:fixed;top:28px;left:28px;z-index:100;width:44px;height:44px;
   border-radius:50%;border:1px solid var(--dim);
-  background:rgba(13,13,13,.7);backdrop-filter:blur(10px);
+  background:rgba(13,13,13,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   color:var(--muted);cursor:pointer;font-size:1.2rem;
   display:flex;align-items:center;justify-content:center;
   transition:all .4s;
@@ -476,9 +478,13 @@ body{
 
 <!-- ================================================================ -->
 <script>
-// ===== DB =====
-const DB_NAME='PortfolioDB_V2',DB_VER=1;let db;
-function openDB(){return new Promise((r,rej)=>{const req=indexedDB.open(DB_NAME,DB_VER);req.onupgradeneeded=e=>{const d=e.target.result;['videos','config'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'key',autoIncrement:s==='videos'})});if(!d.objectStoreNames.contains('bgfile'))d.createObjectStore('bgfile',{keyPath:'key'});if(!d.objectStoreNames.contains('musicfile'))d.createObjectStore('musicfile',{keyPath:'key'});if(!d.objectStoreNames.contains('resume'))d.createObjectStore('resume',{keyPath:'key'})};req.onsuccess=e=>{db=e.target.result;r(db)};req.onerror=e=>rej(e.target.error)})}
+// ===== DB (带 localStorage 回退) =====
+const DB_NAME='PortfolioDB_V2',DB_VER=1;let db,dbAvailable=true;
+function openDB(){return new Promise((r,rej)=>{try{const req=indexedDB.open(DB_NAME,DB_VER);req.onupgradeneeded=e=>{const d=e.target.result;['videos','config'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'key',autoIncrement:s==='videos'})});if(!d.objectStoreNames.contains('bgfile'))d.createObjectStore('bgfile',{keyPath:'key'});if(!d.objectStoreNames.contains('musicfile'))d.createObjectStore('musicfile',{keyPath:'key'});if(!d.objectStoreNames.contains('resume'))d.createObjectStore('resume',{keyPath:'key'})};req.onsuccess=e=>{db=e.target.result;r(db)};req.onerror=()=>{dbAvailable=false;r(null)}}catch(e){dbAvailable=false;r(null)}})}
+async function saveToDB(){if(!db||!dbAvailable)return saveToLS();try{const tx=db.transaction('config','readwrite');tx.objectStore('config').put({key:'data',value:data});await new Promise(r=>tx.oncomplete=r)}catch(e){saveToLS()}}
+async function loadFromDB(){await openDB();if(!db||!dbAvailable)return loadFromLS();return new Promise(r=>{try{const tx=db.transaction('config','readonly');const req=tx.objectStore('config').get('data');req.onsuccess=()=>{if(req.result)data=req.result.value;r()};req.onerror=()=>r()}catch(e){loadFromLS();r()}})}
+function saveToLS(){try{localStorage.setItem('pf_data',JSON.stringify(data))}catch(e){}}
+function loadFromLS(){try{const d=localStorage.getItem('pf_data');if(d)data=JSON.parse(d)}catch(e){}}
 
 const DEFAULTS={
   overline:'VIDEO PORTFOLIO',name:'谢时庆',
@@ -662,6 +668,8 @@ function initPalettes(){
 }
 
 async function loadFiles(){
+  if(!db||!dbAvailable){return} // 移动端无DB时跳过文件加载
+  try{
   // Videos
   const vtx=db.transaction('videos','readonly');const vs=vtx.objectStore('videos');
   const allV=await new Promise(r=>{const req=vs.getAll();req.onsuccess=()=>r(req.result||[])});
@@ -678,6 +686,7 @@ async function loadFiles(){
   const mtx=db.transaction('musicfile','readonly');
   const mitem=await new Promise(r=>{const req=mtx.objectStore('musicfile').get('main');req.onsuccess=()=>r(req.result)});
   if(mitem&&mitem.blob){musicBlobUrl=URL.createObjectURL(mitem.blob);data.musicFileId='main'}
+  }catch(e){console.log('File load skipped (mobile)')}
 }
 
 // ===== Fluid Canvas =====
@@ -720,7 +729,7 @@ function updateBgDisplay(){
     container.innerHTML=`<img src="${bgBlobUrl}" alt="bg">`;
     fluidActive=false;canvas.style.display='none';
   }else if(data.bgType==='video'&&bgBlobUrl){
-    container.innerHTML=`<video src="${bgBlobUrl}" autoplay muted loop playsinline></video>`;
+    container.innerHTML=`<video src="${bgBlobUrl}" autoplay muted loop playsinline webkit-playsinline></video>`;
     fluidActive=false;canvas.style.display='none';
   }else{
     fluidActive=true;canvas.style.display='block';initFluid();
@@ -908,7 +917,7 @@ function openVideoModal(v){
     const testVid=document.createElement('video');testVid.preload='metadata';testVid.muted=true;
     testVid.src=url;
     const showPlayer=()=>{
-      modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline></video>`;
+      modalContent.innerHTML=`<video src="${url}" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-orientation="portraint"></video>`;
       modal.classList.add('active');document.body.style.overflow='hidden';
     };
     testVid.onloadedmetadata=()=>{
@@ -1102,12 +1111,14 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 
 // ===== Boot =====
 (async function(){
-  await openDB();await loadFromDB();await loadFiles();await loadThumbnails();
+  try{await openDB()}catch(e){dbAvailable=false}
+  try{await loadFromDB()}catch(e){loadFromLS()}
+  try{await loadFiles()}catch(e){}
+  try{await loadThumbnails()}catch(e){}
   renderFront();
-  initFluid();animateFluid();
-  // Try autoplay music (may be blocked by browser)
+  try{initFluid();animateFluid()}catch(e){}
   updateAudioSrc();
-  try{bgAudio.volume=0.2;await bgAudio.play();musicPlaying=true;musicBtn.classList.add('playing')}catch(e){}
+  try{bgAudio.volume=0.2;await bgAudio.play();musicPlaying=true;musicBtn.classList.add('playing')}catch(e){/* autoplay blocked on mobile */}
 })();
 </script>
 </body>
