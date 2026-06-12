@@ -18,18 +18,15 @@
   "gridCols": 4,
   "cardGap": 24,
   "bgType": "fluid",
-  "bgFileId": null,
-  "musicName": "一脸无辜的西瓜 - 昨夜小楼又东风 - 江源东",
+  "musicName": "再飞行 — 逃跑计划",
   "musicUrl": "https://music.163.com/song/media/outer/url?id=28267530.mp3",
-  "musicFileId": "main",
-  "resumeFileId": "main",
   "videos": [
-    {"title":"品牌故事 · 匠心","category":"商业片","duration":"2:30","embedUrl":"","isLocal":true,"key":"vid_1781273824253_duki40zkhi8","mediaType":"video","aspectRatio":0.5625},
-    {"title":"情绪短片 · 城市独白","category":"短视频","duration":"0:45","embedUrl":"","isLocal":true,"key":"vid_1781274010035_7yp1nlxnawu","mediaType":"video","aspectRatio":1.7778},
-    {"title":"产品大片 · 质感","category":"混剪","duration":"1:15","embedUrl":"","isLocal":true,"key":"vid_1781274061937_w9fjlsk9yw9","mediaType":"video","aspectRatio":0.5625},
-    {"title":"人物访谈 · 对话","category":"口播","duration":"3:20","embedUrl":"","isLocal":false,"mediaType":"video"},
-    {"title":"创意广告 · 反转","category":"商业片","duration":"1:00","embedUrl":"","isLocal":false,"mediaType":"video"},
-    {"title":"旅拍VLOG · 城市","category":"短视频","duration":"0:50","embedUrl":"","isLocal":false,"mediaType":"video"},
-    {"title":"街拍 · 光影","category":"摄影","duration":"","embedUrl":"","isLocal":true,"key":"vid_1781273835592_dn4yieg5s0n","mediaType":"image"}
+    {"title":"品牌故事 · 匠心","category":"商业片","duration":"2:30","file":"assets/video1.mp4","mediaType":"video","aspectRatio":0.5625},
+    {"title":"情绪短片 · 城市独白","category":"短视频","duration":"0:45","file":"assets/video2.mp4","mediaType":"video","aspectRatio":1.78},
+    {"title":"产品大片 · 质感","category":"混剪","duration":"1:15","file":"assets/video3.mp4","mediaType":"video","aspectRatio":0.5625},
+    {"title":"人物访谈 · 对话","category":"口播","duration":"3:20","file":"","mediaType":"video"},
+    {"title":"创意广告 · 反转","category":"商业片","duration":"1:00","file":"","mediaType":"video"},
+    {"title":"旅拍VLOG · 城市","category":"短视频","duration":"0:50","file":"","mediaType":"video"},
+    {"title":"街拍 · 光影","category":"摄影","duration":"","file":"assets/photo1.jpg","mediaType":"image"}
   ]
 }
