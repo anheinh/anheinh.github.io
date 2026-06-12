@@ -506,13 +506,13 @@ const DEFAULTS={
   musicUrl:'https://music.163.com/song/media/outer/url?id=28267530.mp3',
   musicFileId:'main',
   videos:[
-    {title:'品牌故事 · 匠心',category:'商业片',duration:'2:30',embedUrl:'',file:'assets/video1.mp4',mediaType:'video',aspectRatio:0.5625},
-    {title:'情绪短片 · 城市独白',category:'短视频',duration:'0:45',embedUrl:'',file:'assets/video2.mp4',mediaType:'video',aspectRatio:1.7778},
-    {title:'产品大片 · 质感',category:'混剪',duration:'1:15',embedUrl:'',file:'assets/video3.mp4',mediaType:'video',aspectRatio:0.5625},
+    {title:'品牌故事 · 匠心',category:'商业片',duration:'2:30',embedUrl:'',file:'',mediaType:'video',aspectRatio:0.5625},
+    {title:'情绪短片 · 城市独白',category:'短视频',duration:'0:45',embedUrl:'',file:'',mediaType:'video',aspectRatio:1.78},
+    {title:'产品大片 · 质感',category:'混剪',duration:'1:15',embedUrl:'',file:'',mediaType:'video',aspectRatio:0.5625},
     {title:'人物访谈 · 对话',category:'口播',duration:'3:20',embedUrl:'',file:'',mediaType:'video'},
     {title:'创意广告 · 反转',category:'商业片',duration:'1:00',embedUrl:'',file:'',mediaType:'video'},
     {title:'旅拍VLOG · 城市',category:'短视频',duration:'0:50',embedUrl:'',file:'',mediaType:'video'},
-    {title:'街拍 · 光影',category:'摄影',duration:'',embedUrl:'',file:'assets/photo1.jpg',mediaType:'image'},
+    {title:'街拍 · 光影',category:'摄影',duration:'',embedUrl:'',file:'',mediaType:'image'},
   ],
   resumeFileId:'main'
 };
@@ -1110,7 +1110,7 @@ function renderVideoEditor(){
   });
   c.querySelectorAll('input[type=text],select').forEach(el=>{if(!el.classList.contains('file-input'))el.onchange=function(){data.videos[parseInt(this.dataset.idx)][this.dataset.field]=this.value}});
   c.querySelectorAll('.del-btn').forEach(btn=>{btn.onclick=function(){const idx=parseInt(this.dataset.idx);if(confirm('删除？')){const v=data.videos[idx];if(v.key){if(videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}if(videoThumbnails[v.key]){delete videoThumbnails[v.key];delete thumbnailCache[v.key]}db.transaction('videos','readwrite').objectStore('videos').delete(v.key)}data.videos.splice(idx,1);renderVideoEditor()}}});
-  c.querySelectorAll('.file-input').forEach(input=>{input.onchange=async function(){const idx=parseInt(this.dataset.idx);const file=this.files[0];if(!file)return;const isImg=file.type.startsWith('image/');const v=data.videos[idx];if(v.key&&videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}const tx=db.transaction('videos','readwrite');const store=tx.objectStore('videos');const fileKey='vid_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((r,rej)=>{const req=store.put({key:fileKey,blob:file,name:file.name,size:file.size});req.onsuccess=()=>{videoBlobUrls[fileKey]=URL.createObjectURL(file);v.key=fileKey;v.isLocal=true;v.embedUrl='';v.mediaType=isImg?'image':'video';r()};req.onerror=()=>{alert('文件过大');rej()}});v.title=v.title||file.name.replace(/\.[^.]+$/,'');v.duration=isImg?'':(v.duration||'0:00');if(isImg){videoThumbnails[fileKey]=videoBlobUrls[fileKey];thumbnailCache[fileKey]=videoBlobUrls[fileKey]}else{generateThumbnail(videoBlobUrls[fileKey],fileKey)}renderVideoEditor();showToast('✓ '+(isImg?'图片':'视频')+'已上传')}});
+  c.querySelectorAll('.file-input').forEach(input=>{input.onchange=async function(){const idx=parseInt(this.dataset.idx);const file=this.files[0];if(!file)return;const isImg=file.type.startsWith('image/');const v=data.videos[idx];if(v.key&&videoBlobUrls[v.key]){URL.revokeObjectURL(videoBlobUrls[v.key]);delete videoBlobUrls[v.key]}const tx=db.transaction('videos','readwrite');const store=tx.objectStore('videos');const fileKey='vid_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((r,rej)=>{const req=store.put({key:fileKey,blob:file,name:file.name,size:file.size});req.onsuccess=()=>{videoBlobUrls[fileKey]=URL.createObjectURL(file);v.key=fileKey;v.isLocal=true;v.embedUrl='';v.mediaType=isImg?'image':'video';v.file=isImg?('assets/'+fileKey+'.jpg'):('assets/'+fileKey+'.mp4');r()};req.onerror=()=>{alert('文件过大');rej()}});v.title=v.title||file.name.replace(/\.[^.]+$/,'');v.duration=isImg?'':(v.duration||'0:00');if(isImg){videoThumbnails[fileKey]=videoBlobUrls[fileKey];thumbnailCache[fileKey]=videoBlobUrls[fileKey]}else{generateThumbnail(videoBlobUrls[fileKey],fileKey)}renderVideoEditor();showToast('✓ '+(isImg?'图片':'视频')+'已上传')}});
 }
 document.getElementById('btnAddVideo').onclick=()=>{data.videos.push({title:'新作品',category:'商业片',duration:'0:00',embedUrl:'',isLocal:false,key:null,mediaType:'video'});renderVideoEditor()};
 
