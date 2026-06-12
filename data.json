@@ -20,13 +20,70 @@
   "bgType": "fluid",
   "musicName": "再飞行 — 逃跑计划",
   "musicUrl": "https://music.163.com/song/media/outer/url?id=28267530.mp3",
+  "resumeFileId": "main",
   "videos": [
-    {"title":"品牌故事 · 匠心","category":"商业片","duration":"2:30","file":"assets/video1.mp4","mediaType":"video","aspectRatio":0.5625},
-    {"title":"情绪短片 · 城市独白","category":"短视频","duration":"0:45","file":"assets/video2.mp4","mediaType":"video","aspectRatio":1.78},
-    {"title":"产品大片 · 质感","category":"混剪","duration":"1:15","file":"assets/video3.mp4","mediaType":"video","aspectRatio":0.5625},
-    {"title":"人物访谈 · 对话","category":"口播","duration":"3:20","file":"","mediaType":"video"},
-    {"title":"创意广告 · 反转","category":"商业片","duration":"1:00","file":"","mediaType":"video"},
-    {"title":"旅拍VLOG · 城市","category":"短视频","duration":"0:50","file":"","mediaType":"video"},
-    {"title":"街拍 · 光影","category":"摄影","duration":"","file":"assets/photo1.jpg","mediaType":"image"}
+    {
+      "title": "品牌故事 · 匠心",
+      "category": "商业片",
+      "duration": "2:30",
+      "file": "assets/video1.mp4",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": 0.5625
+    },
+    {
+      "title": "情绪短片 · 城市独白",
+      "category": "短视频",
+      "duration": "0:45",
+      "file": "assets/video2.mp4",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": 1.78
+    },
+    {
+      "title": "产品大片 · 质感",
+      "category": "混剪",
+      "duration": "1:15",
+      "file": "assets/video3.mp4",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": 0.5625
+    },
+    {
+      "title": "人物访谈 · 对话",
+      "category": "口播",
+      "duration": "3:20",
+      "file": "",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": null
+    },
+    {
+      "title": "创意广告 · 反转",
+      "category": "商业片",
+      "duration": "1:00",
+      "file": "",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": null
+    },
+    {
+      "title": "旅拍VLOG · 城市",
+      "category": "短视频",
+      "duration": "0:50",
+      "file": "",
+      "embedUrl": "",
+      "mediaType": "video",
+      "aspectRatio": null
+    },
+    {
+      "title": "街拍 · 光影",
+      "category": "摄影",
+      "duration": "",
+      "file": "assets/photo1.jpg",
+      "embedUrl": "",
+      "mediaType": "image",
+      "aspectRatio": null
+    }
   ]
 }
