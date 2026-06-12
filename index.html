@@ -333,6 +333,7 @@ body{
     <div class="actions">
       <button class="btn-preview" id="btnPreview">👁 预览</button>
       <button class="btn-save" id="btnSave">💾 保存并发布</button>
+      <button class="btn-preview" id="btnExport">📥 导出数据</button>
       <button class="btn-exit" id="btnExit">✕ 退出</button>
     </div>
   </div>
@@ -950,6 +951,16 @@ document.getElementById('loginBtn').onclick=()=>{if(document.getElementById('log
 document.getElementById('loginPwd').onkeydown=e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()};
 
 function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes();renderPreview()}
+// 导出数据
+document.getElementById('btnExport').onclick=()=>{
+  const exportData={data:data,videoThumbnails:videoThumbnails,updated:new Date().toISOString()};
+  const json=JSON.stringify(exportData,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='portfolio-data-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  // 同时复制到剪贴板
+  try{navigator.clipboard.writeText(json);showToast('📋 数据已导出+复制到剪贴板！发给我，我帮你烧结到网页里')}catch(e){showToast('📥 数据已下载！把文件发给我')}
+};
 document.getElementById('btnExit').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 document.getElementById('btnPreview').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 
