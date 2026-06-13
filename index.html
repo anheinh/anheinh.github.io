@@ -5,7 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PORTFOLIO</title>
+<title>谢时庆 · 视频作品集 | Video Portfolio</title>
+<meta name="description" content="谢时庆视频作品集 — 五年自媒体经验，服务超100家商户。专注品牌短片、广告创意与内容策划。导演 / 剪辑 / 调色 / 创意策划。">
+<meta name="keywords" content="视频作品集,导演,剪辑,调色,品牌短片,创意策划,视频制作,谢时庆">
+<meta name="author" content="谢时庆">
+
+<!-- Open Graph -->
+<meta property="og:title" content="谢时庆 · 视频作品集">
+<meta property="og:description" content="五年自媒体经验，服务超100家商户。导演 / 剪辑 / 调色 / 创意策划。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://anheinh.github.io/">
+<meta property="og:image" content="https://anheinh.github.io/assets/cover.jpg">
+<meta property="og:site_name" content="谢时庆作品集">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="谢时庆 · 视频作品集">
+<meta name="twitter:description" content="五年自媒体经验，服务超100家商户。导演 / 剪辑 / 调色 / 创意策划。">
+<meta name="twitter:image" content="https://anheinh.github.io/assets/cover.jpg">
+
+<!-- 结构化数据 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "谢时庆",
+  "jobTitle": "视频创作者 / 导演",
+  "description": "五年自媒体经验，服务超100家商户。专注品牌短片、广告创意与内容策划。",
+  "url": "https://anheinh.github.io/",
+  "email": "1559840686@qq.com",
+  "knowsAbout": ["导演", "剪辑", "调色", "创意策划", "品牌短片", "内容运营"],
+  "sameAs": []
+}
+</script>
 <style>
 /* ============================================================
    FLUID LIGHT + CINEMATIC + DOPAMINE — 流体光效电影杂志
@@ -245,7 +277,33 @@ body{
 .contact-card .label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem;font-weight:500}
 .contact-card .value{font-size:.9rem;font-weight:300;letter-spacing:.03em}
 
+/* ===== 骨架屏 ===== */
+.skeleton-pulse{animation:skeletonPulse 1.5s ease-in-out infinite;background:linear-gradient(90deg,#1a1a1a 25%,#222 50%,#1a1a1a 75%);background-size:200% 100%}
+@keyframes skeletonPulse{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{aspect-ratio:16/9;border:1px solid var(--border)}
+#skeletonOverlay{position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .6s}
+#skeletonOverlay.hidden{opacity:0;pointer-events:none}
+#skeletonOverlay .loader-text{font-family:"PingFang SC","STSong","Songti SC","SimSun",serif;font-size:1.5rem;color:var(--muted);animation:skeletonPulse 2s ease-in-out infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ===== 返回顶部 ===== */
+.back-to-top{position:fixed;bottom:80px;right:28px;z-index:100;width:44px;height:44px;border-radius:50%;border:1px solid var(--dim);background:rgba(13,13,13,.85);backdrop-filter:blur(10px);color:var(--muted);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .3s;opacity:0;transform:translateY(20px);pointer-events:none}
+.back-to-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.back-to-top:hover{color:var(--pop1);border-color:var(--pop1)}
+
+/* ===== 滚动动画 ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease-out,transform .8s ease-out}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
 .footer{text-align:center;padding:2.5rem;color:var(--dim);font-size:.7rem;letter-spacing:.1em;font-weight:300}
+
+/* ===== 无障碍 ===== */
+:focus-visible{outline:2px solid var(--pop3);outline-offset:2px}
+button:focus-visible,a:focus-visible{border-radius:4px}
+.video-card:focus-visible{outline:2px solid var(--pop1);outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  #fluidCanvas{display:none}
+}
 
 @media(max-width:768px){
   .about-grid{grid-template-columns:1fr;gap:3rem;text-align:center}
@@ -256,6 +314,14 @@ body{
   .two-col{grid-template-columns:1fr}
   .video-edit-card .row{grid-template-columns:1fr 1fr}
   .section-number{font-size:3rem}
+  .contact-row{flex-direction:column}
+  .contact-card{max-width:100%}
+  .admin-body{flex-direction:column}
+  .admin-preview{width:100%;height:300px}
+}
+@media(pointer:coarse){
+  .music-btn,.gear-btn,.back-to-top{width:52px;height:52px;font-size:1.4rem}
+  .modal-close{width:52px;height:52px;top:1rem;right:1rem}
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .animate{animation:fadeUp .8s ease-out forwards}
@@ -278,23 +344,23 @@ body{
   <div class="scroll-indicator"><span>Scroll</span><div class="line"></div></div>
 </section>
 
-<section class="section" id="works">
+<section class="section reveal" id="works">
   <div class="section-header"><div class="section-number">01</div><div class="section-label">精选作品</div><p class="section-desc">Selected Works</p></div>
   <div class="filters" id="filters"></div>
   <div class="video-grid" id="videoGrid"></div>
 </section>
 
 <div class="modal" id="modal">
-  <button class="modal-close" id="modalClose">&times;</button>
+  <button class="modal-close" id="modalClose" aria-label="关闭">&times;</button>
   <div class="modal-content" id="modalContent"></div>
 </div>
 
-<section class="section resume-section" id="resumeSection">
+<section class="section resume-section reveal" id="resumeSection">
   <div class="section-header"><div class="section-number">02</div><div class="section-label">个人简历</div><p class="section-desc">Résumé</p></div>
   <div id="resumeContainer"></div>
 </section>
 
-<section class="section" id="about">
+<section class="section reveal" id="about">
   <div class="section-header"><div class="section-number">03</div><div class="section-label">关于我</div><p class="section-desc">About</p></div>
   <div class="about-wrap"><div class="about-grid">
     <div class="about-text"><h3 id="aboutTitle"></h3><p id="aboutText"></p><div class="about-skill-list" id="skillList"></div></div>
@@ -302,7 +368,7 @@ body{
   </div></div>
 </section>
 
-<section class="section" id="contact">
+<section class="section reveal" id="contact">
   <div class="section-header"><div class="section-number">04</div><div class="section-label">联系方式</div><p class="section-desc">Contact</p></div>
   <div class="contact-row" id="contactRow"></div>
 </section>
@@ -312,11 +378,11 @@ body{
 </div><!-- #contentLayer -->
 
 <!-- ===== 背景音乐按钮 ===== -->
-<button class="music-btn playing" id="musicBtn" title="背景音乐">♪</button>
+<button class="music-btn playing" id="musicBtn" title="背景音乐" aria-label="背景音乐开关">♪</button>
 <audio id="bgAudio" loop preload="metadata"></audio>
 
 <!-- ===== 齿轮 + 登录 ===== -->
-<button class="gear-btn" id="gearBtn" title="后台">⚙</button>
+<button class="gear-btn" id="gearBtn" title="后台" aria-label="打开后台管理">⚙</button>
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <h2>后台管理</h2><p>请输入密码</p>
@@ -332,9 +398,9 @@ body{
     <h2>PORTFOLIO — ADMIN</h2>
     <div class="actions">
       <button class="btn-preview" id="btnPreview">👁 预览</button>
-      <button class="btn-save" id="btnSave">💾 保存并发布</button>
+      <button class="btn-save" id="btnSave">💾 保存草稿</button>
       <button class="btn-preview" id="btnExport">📥 导出</button>
-      <button class="btn-save" id="btnCloudSync" style="background:var(--pop3)!important;border-color:var(--pop3)!important;color:#000!important">☁ 同步到云端</button>
+      <button class="btn-save" id="btnPublish" style="background:var(--pop3)!important;border-color:var(--pop3)!important;color:#000!important">☁ 发布到云端</button>
       <button class="btn-exit" id="btnExit">✕ 退出</button>
     </div>
   </div>
@@ -478,6 +544,12 @@ body{
     </div>
   </div>
 </div>
+
+<!-- 骨架屏 -->
+<div id="skeletonOverlay"><span class="loader-text">Loading</span></div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" aria-label="返回顶部" title="返回顶部">↑</button>
 
 <!-- Toast 提示 -->
 <div class="toast" id="toast"></div>
@@ -974,7 +1046,7 @@ document.getElementById('gearBtn').onclick=()=>{loginOverlay.classList.add('show
 document.getElementById('loginBtn').onclick=()=>{if(document.getElementById('loginPwd').value===getPwd()){loginOverlay.classList.remove('show');openAdmin()}else alert('密码错误')};
 document.getElementById('loginPwd').onkeydown=e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()};
 
-function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes();renderPreview()}
+function openAdmin(){adminOverlay.classList.add('show');syncAdmin();initPalettes();renderPreview();document.getElementById('edGHToken').value=getGHToken()}
 // 导出数据
 document.getElementById('btnExport').onclick=()=>{
   const exportData={data:data,videoThumbnails:videoThumbnails,updated:new Date().toISOString()};
@@ -984,52 +1056,84 @@ document.getElementById('btnExport').onclick=()=>{
   a.download='portfolio-full-'+new Date().toISOString().slice(0,10)+'.json';a.click();
   showToast('📥 完整备份已下载')
 };
-// ===== 云端同步：通过 GitHub API 直接上传 =====
+// ================================================================
+// 云端存储 & 自动发布系统
+// ================================================================
+
+// ---- GitHub API 配置 ----
 const GITHUB_TOKEN_KEY='gh_token';
+const GH_OWNER='anheinh';
+const GH_REPO='anheinh.github.io';
+const GH_PATH='data.json';
 function getGHToken(){return localStorage.getItem(GITHUB_TOKEN_KEY)||''}
 function setGHToken(t){localStorage.setItem(GITHUB_TOKEN_KEY,t)}
-const GH_REPO='anheinh/anheinh.github.io';
+function isGitHubConfigured(){return !!getGHToken()}
 
-// ===== 云端同步：下载素材+data.json，告诉Claude "sync" 自动推送 =====
-async function syncToCloud(){
-  showToast('☁ 正在准备同步包...');
-  const downloads=[];
-  // 1. 下载所有本地文件
-  for(const v of data.videos){
-    if(v.file&&videoBlobUrls[v.key]){
-      const blobUrl=videoBlobUrls[v.key];
-      try{
-        const resp=await fetch(blobUrl);const blob=await resp.blob();
-        const fname=v.file.split('/').pop(); // 提取文件名
-        const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-        a.download=fname;a.click();downloads.push(fname);
-        await new Promise(r=>setTimeout(r,300)); // 间隔避免浏览器拦截
-      }catch(e){console.log('Download failed: '+v.file)}
-    }
+// ===== 通过 GitHub API 提交 data.json =====
+async function publishToGitHub(jsonContent, commitMsg){
+  if(!isGitHubConfigured()) throw new Error('GitHub Token 未配置，请先在后台设置');
+  const token=getGHToken();
+  const apiUrl=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+
+  let sha=null;
+  try{
+    const getResp=await fetch(apiUrl,{headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github.v3+json'}});
+    if(getResp.ok){const d=await getResp.json();sha=d.sha}
+  }catch(e){}
+
+  const content=btoa(unescape(encodeURIComponent(jsonContent)));
+  const body={message:commitMsg,content:content};
+  if(sha) body.sha=sha;
+
+  const putResp=await fetch(apiUrl,{
+    method:'PUT',
+    headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body:JSON.stringify(body),
+  });
+  if(!putResp.ok){const e=await putResp.json().catch(()=>({}));throw new Error(`GitHub API: ${putResp.status} ${e.message||''}`)}
+  return await putResp.json();
+}
+
+// ===== 「发布到云端」主流程 =====
+async function publishAll(){
+  if(!isGitHubConfigured()){showToast('❌ 请先在「密码」标签页设置 GitHub Token',true);return}
+  const btn=document.getElementById('btnPublish');
+  btn.disabled=true;btn.textContent='☁ 发布中...';
+
+  try{
+    const cloudData=buildCloudData();
+    showToast('☁ 正在发布到 GitHub...');
+    await publishToGitHub(
+      JSON.stringify(cloudData,null,2),
+      `📝 后台发布更新 — ${new Date().toLocaleString('zh-CN')}`
+    );
+    await saveToDB();
+    showToast('✅ 发布成功！1-2 分钟后全网生效');
+  }catch(e){
+    showToast('❌ 发布失败: '+e.message,true);
+    console.error(e);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='☁ 发布到云端';
   }
-  // 2. 下载 data.json
-  const cloudData={
-    overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,
-    aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,
+}
+
+function buildCloudData(){
+  return {
+    overline:data.overline,name:data.name,subtitle:data.subtitle,
+    aboutTitle:data.aboutTitle,aboutText:data.aboutText,
+    skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,
     bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,
     heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,
     bgType:data.bgType,musicName:data.musicName,musicUrl:data.musicUrl,
     resumeFileId:data.resumeFileId,
-    videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,file:v.file||'',embedUrl:v.embedUrl||'',mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))
+    videos:data.videos.map(v=>({
+      title:v.title,category:v.category,duration:v.duration,
+      file:v.file||'',embedUrl:v.embedUrl||'',
+      mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null
+    }))
   };
-  const dj=JSON.stringify(cloudData,null,2);
-  const jblob=new Blob([dj],{type:'application/json'});
-  const ja=document.createElement('a');ja.href=URL.createObjectURL(jblob);
-  ja.download='data.json';ja.click();
-  downloads.push('data.json');
-
-  // 复制到剪贴板备用
-  try{navigator.clipboard.writeText(dj)}catch(e){}
-
-  showToast('📥 同步包已下载！把下载的文件放到 e:/portfolio/assets/ 文件夹，然后告诉我 "sync"');
 }
-
-document.getElementById('btnCloudSync').onclick=()=>syncToCloud();
 
 // 导出按钮
 document.getElementById('btnExport').onclick=()=>{
@@ -1042,6 +1146,7 @@ document.getElementById('btnExport').onclick=()=>{
 };
 document.getElementById('btnExit').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
 document.getElementById('btnPreview').onclick=()=>{adminOverlay.classList.remove('show');renderFront()};
+document.getElementById('btnPublish').onclick=()=>publishAll();
 
 document.querySelectorAll('.admin-tab').forEach(tab=>{tab.onclick=()=>{
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');
@@ -1195,7 +1300,7 @@ document.getElementById('btnSave').onclick=async()=>{
   data.bgType=document.getElementById('edBgType').value;
   data.musicName=document.getElementById('edMusicName').value.trim();
   data.musicUrl=document.getElementById('edMusicUrl').value.trim();
-  await saveToDB();adminOverlay.classList.remove('show');renderFront();updateAudioSrc();if(!musicPlaying)playMusic();
+  await saveToDB();adminOverlay.classList.remove('show');renderFront();observeReveals();updateAudioSrc();if(!musicPlaying)playMusic();
   // 自动同步到线上 data.json（通过postMessage调用父页面推送）
   try{
     const syncData={overline:data.overline,name:data.name,subtitle:data.subtitle,aboutTitle:data.aboutTitle,aboutText:data.aboutText,skills:data.skills,email:data.email,wechat:data.wechat,phone:data.phone,bg:data.bg,c1:data.c1,c2:data.c2,c3:data.c3,c4:data.c4,c5:data.c5,heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,bgType:data.bgType,bgFileId:data.bgFileId,musicName:data.musicName,musicUrl:data.musicUrl,musicFileId:data.musicFileId,resumeFileId:data.resumeFileId,videos:data.videos.map(v=>({title:v.title,category:v.category,duration:v.duration,embedUrl:v.embedUrl||'',isLocal:v.isLocal||false,key:v.key||null,mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null}))};
@@ -1217,13 +1322,42 @@ document.getElementById('btnSaveToken').onclick=()=>{
 };
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+// ===== 骨架屏 =====
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const sk=document.getElementById('skeletonOverlay');
+    if(sk){sk.classList.add('hidden');setTimeout(()=>sk.remove(),600)}
+  },500);
+});
+
+// ===== Intersection Observer：滚动触发动画 =====
+const revealObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObserver.unobserve(e.target)}});
+},{threshold:0.15});
+function observeReveals(){
+  document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+}
+
+// ===== 返回顶部按钮 =====
+const backToTop=document.getElementById('backToTop');
+let backToTopShowing=false;
+window.addEventListener('scroll',()=>{
+  const shouldShow=window.scrollY>window.innerHeight;
+  if(shouldShow!==backToTopShowing){
+    backToTopShowing=shouldShow;
+    backToTop.classList.toggle('visible',shouldShow);
+  }
+});
+backToTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+
 // ===== Boot =====
 (async function(){
+  
   try{await openDB()}catch(e){dbAvailable=false}
   try{await loadFromDB()}catch(e){loadFromLS()}
   try{await loadFiles()}catch(e){}
   try{await loadThumbnails()}catch(e){}
-  renderFront();
+  renderFront();observeReveals();
   try{initFluid();animateFluid()}catch(e){}
   updateAudioSrc();
   // 尊重用户之前的音乐开关状态

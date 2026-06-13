@@ -1,0 +1,16 @@
+# Claude 项目配置
+.claude/
+.agents/
+
+# Node
+node_modules/
+package-lock.json
+
+# 系统
+.DS_Store
+Thumbs.db
+*.log
+
+# 临时文件
+temp/
+tmp/
