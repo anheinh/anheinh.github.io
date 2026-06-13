@@ -586,10 +586,21 @@ const DEFAULTS={
     {title:'旅拍VLOG · 城市',category:'短视频',duration:'0:50',embedUrl:'',file:'',mediaType:'video'},
     {title:'街拍 · 光影',category:'摄影',duration:'',embedUrl:'',file:'',mediaType:'image'},
   ],
-  resumeFileId:'main'
+  resumeFileId:'main',
+  resumeBase64:''
 };
 let data=JSON.parse(JSON.stringify(DEFAULTS));
 let videoBlobUrls={},videoThumbnails={},resumeBlobUrl=null,bgBlobUrl=null,musicBlobUrl=null;
+
+// 从云端 data.json 恢复封面到 videoThumbnails
+function restoreCloudThumbnails(){
+  data.videos.forEach(v=>{
+    if(v.thumb&&!videoThumbnails[v.key]){
+      videoThumbnails[v.key]=v.thumb;
+      thumbnailCache[v.key]=v.thumb;
+    }
+  });
+}
 
 async function loadFromDB(){
   // 优先从线上拉取最新数据（全设备同步）
@@ -682,7 +693,7 @@ function renderPreview(){
   // 作品预览卡片
   const previewVids=data.videos.slice(0,6);
   const vidCards=previewVids.map((v,i)=>{
-    const thumb=videoThumbnails[v.key];
+    const thumb=videoThumbnails[v.key]||v.thumb||'';
     const bgStyle=thumb?`background:url(${thumb}) center/cover`:`background:linear-gradient(135deg,#1a1a2e,#0d1117)`;
     return `<div style="position:relative;overflow:hidden;border:1px solid #262626;min-height:120px;${thumb?'aspect-ratio:'+(v.aspectRatio||16/9):''}">
       <div style="${bgStyle};width:100%;height:100%"></div>
@@ -946,7 +957,7 @@ function renderVideos(filter){
     const hasOnlineFile=v.file&&v.file.length>0; // GitHub 托管文件，全设备可访问
     const onlineUrl=hasOnlineFile?v.file:'';
     const isLocal=v.isLocal&&videoBlobUrls[v.key];
-    const thumb=videoThumbnails[v.key];
+    const thumb=videoThumbnails[v.key]||v.thumb||'';
     const isImage=v.mediaType==='image';
     const isLocalImg=isImage&&videoBlobUrls[v.key];
     const isVideo=v.mediaType==='video'||!v.mediaType;
@@ -1003,8 +1014,10 @@ function renderVideos(filter){
 
 function renderResume(){
   const c=document.getElementById('resumeContainer');
-  if(resumeBlobUrl){c.innerHTML=`<div class="resume-card" onclick="openResumeModal()"><img class="resume-thumb" src="${resumeBlobUrl}" alt="简历"><div class="resume-overlay"><span>View</span><strong>查看完整简历</strong></div><div class="resume-meta"><span>RÉSUMÉ</span><span class="arrow">→</span></div></div>`}
-  else{c.innerHTML='<div class="resume-empty">简历待上传</div>'}
+  const resumeSrc=resumeBlobUrl||data.resumeBase64||'';
+  if(resumeSrc){
+    c.innerHTML=`<div class="resume-card" onclick="openResumeModal()"><img class="resume-thumb" src="${resumeSrc}" alt="简历"><div class="resume-overlay"><span>View</span><strong>查看完整简历</strong></div><div class="resume-meta"><span>RÉSUMÉ</span><span class="arrow">→</span></div></div>`;
+  }else{c.innerHTML='<div class="resume-empty">简历待上传</div>'}
 }
 
 const modal=document.getElementById('modal'),modalContent=document.getElementById('modalContent');
@@ -1038,7 +1051,7 @@ function openVideoModal(v){
 }
 function closeModal(){modal.classList.remove('active');modalContent.innerHTML='';document.body.style.overflow=''}
 document.getElementById('modalClose').onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};document.onkeydown=e=>{if(e.key==='Escape')closeModal()};
-function openResumeModal(){if(!resumeBlobUrl)return;modalContent.innerHTML=`<img src="${resumeBlobUrl}" alt="简历">`;modal.classList.add('active');document.body.style.overflow='hidden'}
+function openResumeModal(){const src=resumeBlobUrl||data.resumeBase64||'';if(!src){alert('暂无简历');return};modalContent.innerHTML=`<img src="${src}" alt="简历">`;modal.classList.add('active');document.body.style.overflow='hidden'}
 
 // ===== Login =====
 const loginOverlay=document.getElementById('loginOverlay'),adminOverlay=document.getElementById('adminOverlay');
@@ -1127,12 +1140,39 @@ function buildCloudData(){
     heroSize:data.heroSize,gridCols:data.gridCols,cardGap:data.cardGap,
     bgType:data.bgType,musicName:data.musicName,musicUrl:data.musicUrl,
     resumeFileId:data.resumeFileId,
+    resumeBase64:data.resumeBase64||'',
     videos:data.videos.map(v=>({
       title:v.title,category:v.category,duration:v.duration,
       file:v.file||'',embedUrl:v.embedUrl||'',
-      mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null
+      mediaType:v.mediaType||'video',aspectRatio:v.aspectRatio||null,
+      thumb:videoThumbnails[v.key]||v.thumb||''
     }))
   };
+}
+
+// ===== 生成视频封面（截取第一帧并压缩为 base64）=====
+function generateThumbBase64(blobUrl, fileKey){
+  return new Promise((resolve)=>{
+    if(thumbnailCache[fileKey]&&videoThumbnails[fileKey]){
+      resolve(videoThumbnails[fileKey]);return;
+    }
+    const video=document.createElement('video');
+    video.preload='metadata';video.muted=true;video.crossOrigin='anonymous';
+    video.src=blobUrl;
+    video.onloadeddata=()=>{video.currentTime=1};
+    video.onseeked=()=>{
+      const c=document.createElement('canvas');
+      c.width=640;c.height=Math.round(640/(video.videoWidth/video.videoHeight||16/9));
+      const ctx=c.getContext('2d');ctx.drawImage(video,0,0,c.width,c.height);
+      const dataUrl=c.toDataURL('image/jpeg',0.65);
+      thumbnailCache[fileKey]=dataUrl;videoThumbnails[fileKey]=dataUrl;
+      // 存 IndexedDB
+      if(db&&dbAvailable){try{const tx=db.transaction('videos','readwrite');tx.objectStore('videos').get(fileKey).onsuccess=e=>{if(e.target.result){e.target.result.thumb=dataUrl;tx.objectStore('videos').put(e.target.result)}}}catch(ex){}}
+      resolve(dataUrl);
+    };
+    video.onerror=()=>{resolve(null)};
+    setTimeout(()=>{if(!thumbnailCache[fileKey])resolve(null)},8000);
+  });
 }
 
 // 导出按钮
@@ -1231,10 +1271,13 @@ resumeFileInput.onchange=async function(){
   const tx=db.transaction('resume','readwrite');
   await new Promise((r,rej)=>{const req=tx.objectStore('resume').put({key:'main',blob:file,name:file.name,size:file.size,updated:Date.now()});req.onsuccess=()=>r();req.onerror=()=>{alert('失败');rej()}});
   if(resumeBlobUrl)URL.revokeObjectURL(resumeBlobUrl);resumeBlobUrl=URL.createObjectURL(file);data.resumeFileId='main';
-  document.getElementById('resumeProgressBar').style.width='100%';
+  // 生成 base64 存入 data，发布时包含在 data.json 中
+  const resumeReader=new FileReader();
+  resumeReader.onload=()=>{data.resumeBase64=resumeReader.result;document.getElementById('resumeProgressBar').style.width='100%'};
+  resumeReader.readAsDataURL(file);
   setTimeout(()=>{document.getElementById('resumeProgress').style.display='none';document.getElementById('resumeProgressBar').style.width='0'},500);
   document.getElementById('resumeUploadArea').classList.add('uploaded');document.getElementById('resumeUploadArea').querySelector('.icon').textContent='✅';
-  updateResumeStatus();showToast('✓ 简历已上传');
+  updateResumeStatus();showToast('✓ 简历已上传，发布后全设备可见');
 };
 function updateResumeStatus(){document.getElementById('resumeStatus').textContent=resumeBlobUrl?'✓ 简历已上传':'⚠ 未上传'}
 document.getElementById('resumeUploadArea').ondragover=e=>{e.preventDefault();e.target.style.borderColor='var(--pop1)'};
@@ -1355,6 +1398,7 @@ backToTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
   
   try{await openDB()}catch(e){dbAvailable=false}
   try{await loadFromDB()}catch(e){loadFromLS()}
+  restoreCloudThumbnails()
   try{await loadFiles()}catch(e){}
   try{await loadThumbnails()}catch(e){}
   renderFront();observeReveals();
